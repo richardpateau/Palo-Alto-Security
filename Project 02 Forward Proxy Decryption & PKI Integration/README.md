@@ -63,7 +63,7 @@ An enterprise decryption profile named `Enterprise-Strict-Decryption` was config
   * Block sessions with unsupported TLS versions (enforcing minimum **TLSv1.2**, maximum **TLSv1.3**).
   * Strip ALPN (Application-Layer Protocol Negotiation) to prevent protocol downgrade attacks.
 
-![Decryption Profile](decryption-profile.png)
+![Decryption Profile](screenshots/decryption-profile.png)
 
 ---
 
