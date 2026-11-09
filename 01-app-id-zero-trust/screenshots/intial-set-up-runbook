@@ -1,0 +1,58 @@
+configure
+
+delete network interface ethernet ethernet1/1 layer3 ip 10.10.10.1/24
+
+set network interface ethernet ethernet1/1 layer3 ip 192.168.1.200/24
+
+set zone Untrust network layer3 ethernet1/1
+
+commit
+
+--------------------
+
+set network virtual-router default routing-table ip static-route DEFAULT-WAN destination 0.0.0.0/0
+set network virtual-router default routing-table ip static-route DEFAULT-WAN interface ethernet1/1
+set network virtual-router default routing-table ip static-route DEFAULT-WAN nexthop ip-address 192.168.1.1
+set network virtual-router default routing-table ip static-route DEFAULT-WAN metric 10
+
+
+------------------------------
+
+configure
+
+delete network interface ethernet ethernet1/2 layer3 ip 203.0.113.2/30
+
+set network interface ethernet ethernet1/2 layer3 ip 10.10.10.1/24
+
+set zone Trust network layer3 ethernet1/2
+
+commit
+
+
+----------------
+
+set rulebase nat rules LAN-to-Internet-NAT from Trust
+set rulebase nat rules LAN-to-Internet-NAT to Untrust
+set rulebase nat rules LAN-to-Internet-NAT source any
+set rulebase nat rules LAN-to-Internet-NAT destination any
+set rulebase nat rules LAN-to-Internet-NAT service any
+set rulebase nat rules LAN-to-Internet-NAT source-translation dynamic-ip-and-port interface-address interface ethernet1/1
+
+------------------------
+
+set rulebase nat rules LAN-to-Internet-NAT from Trust
+set rulebase nat rules LAN-to-Internet-NAT to Untrust
+set rulebase nat rules LAN-to-Internet-NAT source any
+set rulebase nat rules LAN-to-Internet-NAT destination any
+set rulebase nat rules LAN-to-Internet-NAT service any
+set rulebase nat rules LAN-to-Internet-NAT source-translation dynamic-ip-and-port interface-address interface ethernet1/1
+
+
+
+------------------------
+
+# 1. Test Google (Should match Allow-Web-Browsing)
+test security-policy-match from Trust to Untrust source 10.10.10.10 destination 142.251.41.174 protocol 6 destination-port 443 application google-base
+
+# 2. Test YouTube on the EXACT SAME IP/Port (Should fall through to DROP_TEST)
+test security-policy-match from Trust to Untrust source 10.10.10.10 destination 142.251.41.174 protocol 6 destination-port 443 application youtube-base
