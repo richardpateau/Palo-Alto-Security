@@ -96,11 +96,9 @@ To address compliance and privacy mandates, a custom URL category containing 51 
 
 ![Decryption Policy Table](screenshots/bypass-finance-and-health-url.png)
 
-![Decryption Policy Table](screenshots/policies-decryption-overview.png)
-
 **Decrypt-General-Web**
 
-![Decryption Policy Table](screenshots/policies-decryption-overview.png)
+![Decryption Policy Table](screenshots/decrypt-general-web.png)
 
 ---
 
