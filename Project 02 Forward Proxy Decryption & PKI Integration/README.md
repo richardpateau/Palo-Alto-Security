@@ -65,6 +65,8 @@ An enterprise decryption profile named `Enterprise-Strict-Decryption` was config
 
 ![Decryption Profile](screenshots/decryption-profile.png)
 
+![Decryption Profile](screenshots/decryption-profile-tls.png)
+
 ---
 
 ### Stage 3: Regulatory Compliance Bypass & Decryption Rulebase
