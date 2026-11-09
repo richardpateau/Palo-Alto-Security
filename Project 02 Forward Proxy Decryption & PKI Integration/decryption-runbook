@@ -1,0 +1,14 @@
+set cli config-output-format set
+configure
+
+# Generate Forward Trust CA
+request certificate generate certificate-name Enterprise-Forward-Trust-CA name-format fqdn-or-ip-or-email common-name Corp-Decryption-Sub-CA algorithm RSA rsa-nbits 2048 digest sha256 ca yes
+
+# Generate Forward Untrust CA
+request certificate generate certificate-name Enterprise-Forward-Untrust-CA name-format fqdn-or-ip-or-email common-name Corp-Decryption-Untrusted-CA algorithm RSA rsa-nbits 2048 digest sha256 ca yes
+
+# Bind Certificate Usages
+set shared certificate Enterprise-Forward-Trust-CA default-flags forward-trust-certificate
+set shared certificate Enterprise-Forward-Untrust-CA default-flags forward-untrust-certificate
+
+commit

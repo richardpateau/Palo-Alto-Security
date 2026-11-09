@@ -177,7 +177,7 @@ ID     Application   State   Type Flag  Src[Sport]/Zone/Proto (translated IP[Por
 
 ---
 
-### 4. Zero-Downtime Application Group Remediation
+### 4.Application Group Remediation
 
 To allow enterprise web browsing without creating sprawling, unmaintainable rules, an **Application Group** named `Standard-Internet-Apps` was provisioned:
 
@@ -265,67 +265,21 @@ Using `test security-policy-match`, the firewall's policy evaluation engine was 
 
 ---
 
-## Complete Artifact Index
+## Key Artifact Index
 
-All 33 configuration files, network traces, and diagnostic captures in this repository are cataloged below:
+The primary engineering proofs, packet-level verifications, and data plane diagnostics are cataloged below:
 
-| Artifact File | Category | Technical Description & Engineering Proof |
+| Artifact File | Category | Technical Proof & Validation |
 | :--- | :--- | :--- |
-| **`network-interface-gui.png`** | GUI Config | Network interface table confirming `ethernet1/1` (Untrust) and `ethernet1/2` (Trust) link states. |
-| **`show-interface-all.png`** | CLI Diagnostic | CLI verification displaying hardware interface counters, MAC bindings, and operational status. || **`app-id-visio.png`** | Topology Diagram | High-level enterprise lab topology, interface
-| **`network-zones-gui.png`** | GUI Config | Web UI overview of Layer 3 security zone addressing, and zone boundary architecture diagram. |
-| **`intial-set-up-runbook`** | Config bindings for `Trust` and `Untrust`. |
-| **`show-zone.png`** | CLI Diagnostic | Script | Programmatic CLI configuration runbook for interfaces, NAT, static routing, and initial security policies. |
-| ** CLI verification confirming interface assignments and zone membership states. |
-| **`network-virtual-router-routes-gui.png`** | GUI Config | Virtual Router routing table displaying the active default static route (`0.0.0.0/0`)`network-interface-gui.png`** | GUI Networking | PAN-OS Web UI verification of `ethernet1/1 via `192.168.1.1`. |
-| **`show-network-virtual` (Untrust) and `ethernet1/2` (Trust) Layer 3 operational states. |
-| **`network-zones-gui.png`** | GUI Networking | Web UI verification of Layer 3 security zone bindings for `Trust` and `Untrust`. |
-| **`network-virtual-router-routes-gui.png`** | GUI Routing | Web UI routing-router.png`** | CLI Diagnostic | CLI FIB verification (`show routing route`) confirming the active forwarding path to next-hop. table confirming static default route `DEFAULT-WAN` targeting gateway `192.168.1.1`. |
-| **`policies-nat-gui.png`** | GUI NAT Policy | Outbound Source NAT (PAT) configuration (`LAN-to-Internet-NAT`) translating to `ethernet1/1` (`192.168.1.200`). |
-| **`policies-security-overview.png`** | GUI |
-| **`policies-nat-gui.png`** | GUI Config | Web UI view of rule `LAN-to-Internet-NAT` enforcing Dynamic IP and Port (PAT) translation. |
-| **`show-rulebase-nat.png`** | CLI Diagnostic | CLI output displaying the active NAT rulebase configuration and translation parameters. |
-| **`policies-security-overview.png`** | GUI Config | Web UI security policy table showing initial Rules 1–4 with strict `application-default`. |
-| **`show-rulebase-security-1.png`** | CLI Security Policy | Full security rulebase overview displaying rules 1 through 4 with strict `application-default` port enforcement. |
-| **`show-interface-all.png`** | CLI Infrastructure | Dataplane verification confirming hardware link states, speed Diagnostic | CLI audit of configured security pre-rules (ICMP, DNS/NTP, Web-Browsing). |
-| **`show-rulebase-security-2.png`** | CLI Diagnostic | CLI audit of default interzone and intrazone rule/duplex, and IP bindings. |
-| **`show-zone.png`** | CLI Infrastructure | CLI handling and cleanup policy. |
-| **`application-ping.png`** | Rule Config | Detailed view of Rule  validation confirming interface assignments and security zone state for `Trust` and `Untrust`. |
-| **`show-network-virtual-router.png`** | CLI Routing | Kernel FIB/RIB routing verification of active default route via next-hop `192.168.1.1` (metric 10). |
-| **`show-rulebase-nat.png1 permitting ICMP ping with `application-default`. |
-| **`application-ntp-dns.png`** | Rule Config | Detailed view of Rule 2 permitting infrastructure DNS and NTP services. |
-| **`application-ssl-web-browsing.png`** | Rule Config | Initial view of Rule 3 containing only generic `ssl` and `web-browsing` App-IDs. |
-| **`unable-to-view-google.png`** | CLI NAT Policy | CLI confirmation of active source dynamic-ip-and-port translation rules. |
-| **`show`** | Failure Injected | Client browser timeout validating the mid-stream policy drop of unlisted App-IDs. |
-| **-rulebase-security-1.png`** | CLI Security Policy | CLI export of the active security rulebase (`monitor-traffc-google-being-denied.png`** | Traffic Log | Monitor log documentingPart 1: Rules 1–2 for ICMP, DNS, and NTP). |
-| **`show-rulebase- `google-base` dropped mid-stream under rule `DENY_TRAFFIC`. |
-| **`monitor-traffic-youtube-security-2.png`** | CLI Security Policy | CLI export of the active security rulebase (Part 2base-denied.png`** | Traffic Log | Monitor log documenting policy drop enforcement for `youtube-base: Rules 3–4 for Web Browsing and Cleanup Deny). |
-| **`application-ping.` over port 443. |
-| **`youtube-base-denied-detail-log-view.png`** | Rule Config | Detailed view of Rule 1 permitting ICMP ping via `application-default`. |
-| **`applicationpng`** | Traffic Log | **Primary Proof:** Detailed log proving 4 packets / 947 bytes exchanged before L-ntp-dns.png`** | Rule Config | Detailed view of Rule 2 permitting infrastructure DNS and NTP7 drop. |
-| **`show-session-all-filter-google.png`** | CLI Diagnostic. |
-| **`application-ssl-web-browsing.png`** | Rule Config | Initial view of Rule 3 containing only generic `ssl` and `web-browsing`. |
-| **`unable-to-view-google | CLI flow table showing `google-base` sessions locked in `DISCARD FLOW`. |
-| **`show-session-all-filter-youtube.png`** | CLI Diagnostic | CLI flow table showing `youtube-base` sessions locked in `DISCARD FLOW`. |
-| **`google-base-overview.png`** |.png`** | Failure Injection | Workstation browser timeout verifying the mid-stream drop of unlisted Layer 7 App-IDs. |
-| **`monitor-traffc-google-being-denied.png`** | Traffic Log App-ID Catalog | Native PAN-OS App-ID metadata, timeout settings, and container hierarchy for `google-base | Monitor log proving `google-base` dynamically identified via SNI and dropped mid-stream under `DENY_TRAFFIC`. |
-| **`monitor-traffic-youtube-base-denied.png`** | Traffic`. |
-| **`google-base-show-session-id-2245.png`** | CLI Diagnostic | Deep inspection of Session 2245 confirming Layer 7 processing enabled and NAT tracking. |
-| **`creating-application-group.png`** | Object Config | Definition modal for the `Standard-Internet-Apps Log | Monitor log documenting policy drop enforcement for `youtube-base` over port 443. |
-| **`youtube-base-denied-detail-log-view.png`** | Traffic Log | **Primary Proof:** Detailed` application container group. |
-| **`application-group-overview.png`** | Object Config | Objects table log showing 4 packets / 947 bytes exchanged before mid-stream drop. |
-| **`show-session view detailing all enterprise members enrolled in `Standard-Internet-Apps`. |
-| **`applying-standard-internet-apps.png`** | Rule Config | Re-binding Rule 3 (`Allow-Web-Browsing`) to consume the new-all-filter-google.png`** | CLI Diagnostic | Live hardware session table showing `google-base` flows locked in `DISCARD FLOW`. |
-| **`show-session-all-filter-youtube.png Application Group container. |
-| **`google-working-after-policy-change.png`** | Data-Plane Verification | Successful browser render of `google.com` following application-group remediation. |
-| **`youtube-`** | CLI Diagnostic | Live hardware session table showing `youtube-base` flows locked in `DISCARD FLOW`. |
-| **`google-base-overview.png`** | App-ID Catalog | Native PAN-OS Appfailing.png`** | Data-Plane Verification | Browser timeout proving continued granular micro-segmentation of `youtube.com-ID catalog metadata and container hierarchy for `google-base`. |
-| **`google-base-show-session-` on port 443. |
-| **`show-session-all-google-allowed.pngid-2245.png`** | CLI Diagnostic | Deep inspection of Session 2245 verifying Layer`** | CLI Diagnostic | Dataplane flow table showing `google-base` sessions successfully transitioned to `ACTIVE FLOW`. | 7 processing, protocol timers, and source NAT state. |
-| **`creating-application-group.png`** | Object Config
-| **`monitor-traffc-google-allowed.png`** | Traffic Log | Real-time traffic log confirming successful  | Definition modal for the `Standard-Internet-Apps` application container object. |
-| **`application-group`action: allow` and `type: end` for Google. |
-| **`security-policy-match-google.png`**-overview.png`** | Object Config | Table view showing all enrolled members inside `Standard-Internet-Apps`. |
-| **`applying-standard-internet-apps.png`** | Rule Config | Updating Rule 3 to consume the newly provisioned Application Group container | Control-Plane CLI | Deterministic CLI simulation confirming `google-base` matches Rule 3 (`action allow`). |
-| **`security-policy-match-youtube.png`** | Control-Plane CLI | Deterministic CLI simulation confirming . |
-| **`google-working-after-policy-change.png`** | Data-Plane Verification`youtube-base` matches Rule 4 (`action drop`). |
+| **`app-id-visio.png`** | Architecture | Visio topology showing SP3 single-pass flow and security zone boundaries. |
+| **`policies-security-overview.png`** | Policy Config | Security rulebase enforcing strict `application-default` port constraints. |
+| **`unable-to-view-google.png`** | Data Plane Test | Client browser timeout verifying the mid-stream drop of unlisted App-IDs. |
+| **`monitor-traffc-google-being-denied.png`** | Traffic Log | Monitor log proving `google-base` identified via SNI and dropped by `DENY_TRAFFIC`. |
+| **`youtube-base-denied-detail-log-view.png`** | Wire Telemetry | **Primary Proof:** Detailed log showing 4 packets / 947 bytes exchanged before L7 drop. |
+| **`show-session-all-filter-youtube.png`** | CLI Diagnostic | Dataplane flow table showing `youtube-base` sessions locked in `DISCARD FLOW`. |
+| **`application-group-overview.png`** | Enterprise Remediation | Definition of `Standard-Internet-Apps` container grouping permitted dependencies. |
+| **`google-working-after-policy-change.png`** | Verification | Successful web browsing rendering `google.com` following application-group remediation. |
+| **`youtube-failing.png`** | Verification | Browser timeout proving continued granular micro-segmentation of `youtube.com` on port 443. |
+| **`show-session-all-google-allowed.png`** | CLI Diagnostic | Dataplane flow table verifying sessions transitioned from `DISCARD` to `ACTIVE FLOW`. |
+| **`security-policy-match-google.png`** | Control Plane CLI | CLI simulation confirming `google-base` matches Rule 3 with action `allow`. |
+| **`security-policy-match-youtube.png`** | Control Plane CLI | CLI simulation confirming `youtube-base` matches Rule 4 with action `drop`. |
