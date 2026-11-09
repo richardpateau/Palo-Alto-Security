@@ -111,13 +111,13 @@ Navigating to general internet destinations (e.g., `google.com`) verified dynami
   
 ![Palo Alto](screenshots/google-ca-before.png)
   
-![Google Before Decryption](google-ca-details-before.png)
+![Google Before Decryption](screenshots/google-ca-details-before.png)
 
 * **After Decryption Policy:** The browser received a re-signed certificate minted on-the-fly by the firewall:
   
 ![Palo Alto](screenshots/google-ca-certificate-after.png)
 
-![Google Decrypted Cert](google-ca-details-after.png)
+![Google Decrypted Cert](screenshots/google-ca-details-after.png)
 	
 ---
 
