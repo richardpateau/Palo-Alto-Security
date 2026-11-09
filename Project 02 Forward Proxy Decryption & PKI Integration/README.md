@@ -133,12 +133,12 @@ The upstream server presented a certificate issued by an unrecognized root autho
 * **Reason:** `untrusted issuer`
 * **Action:** Connection dropped; corporate user presented with an un-bypassable administrative warning.
 
-![BadSSL Untrusted Root Block](bad-ssl-untrusted.png)
+![BadSSL Untrusted Root Block](screenshots/bad-ssl-untrusted.png)
 
 #### Test B: Expired Server Certificate (`expired.badssl.com`)
 The upstream server presented an expired X.509 certificate. The PA-VM evaluated the validity timestamps against its system clock and blocked the connection:
 
-![BadSSL Expired Cert Block](bad-ssl-test-expired-ca.png)
+![BadSSL Expired Cert Block](screenshots/bad-ssl-test-expired-ca.png)
 
 * **Status:** `expired`
 * **Reason:** `expired certificate`
@@ -151,18 +151,18 @@ To verify that financial sessions were exempt from inspection, the client initia
 
 * **Bank of America (bankofamerica.com):**
  
-![Palo](bank-of-america-ca.png)
+![Palo](screenshots/bank-of-america-ca.png)
   
-![Bank of America Cert](bank-of-america-ca-details.png)
+![Bank of America Cert](screenshots/bank-of-america-ca-details.png)
   
   * **Verified By:** `DigiCert Inc` (Original public CA intact).
   * **Result:** Traffic flowed through the firewall without proxy interception, preserving end-to-end privacy.
 
 * **Chase Bank (chase.com):**
 
-![Chase Cert](chase-ca.png)
+![Chase Cert](screenshots/chase-ca.png)
   
-![Chase Cert](chase-ca-details.png)
+![Chase Cert](screenshots/chase-ca-details.png)
   
   * **Verified By:** `DigiCert Inc` (Original public CA intact).
   * **Result:** Honored `Bypass-Finance-and-Health` rule; zero certificate substitution occurred.
@@ -189,7 +189,7 @@ ID     Application   State   Type Flag  Src[Sport]/Zone/Proto (translated IP[Por
 
 > **Engineering Diagnostic Nuance:** In PAN-OS, the asterisk (`*`) in the session flag column (`*NS`) indicates that the session is actively **decrypted** by the data plane. Regular NAT sessions show `NS`. Sessions with active SSL Forward Proxy show `*NS`.
 
-![CLI Session Decrypt Filter](show-session-ssl-decrypt-yes.png)
+![CLI Session Decrypt Filter](screenshots/show-session-ssl-decrypt-yes.png)
 
 #### PAN-OS Decryption Log Monitor
 Inspecting **Monitor > Logs > Decryption** confirmed end-to-end session parameters:
@@ -199,7 +199,7 @@ Inspecting **Monitor > Logs > Decryption** confirmed end-to-end session paramete
 * **Root Status:** `trusted`
 * **Root Common Name:** Verified against authentic root anchors (e.g., `ISRG Root X1`).
 
-![Monitor Decryption Log](monitor-decryption-overview.png)
+![Monitor Decryption Log](screenshots/monitor-decryption-overview.png)
 
 ---
 
@@ -207,7 +207,7 @@ Inspecting **Monitor > Logs > Decryption** confirmed end-to-end session paramete
 
 With cleartext visibility established, Layer 7 Security Profiles were attached to the production security rulebase to inspect the unencrypted stream for threats:
 
-![Security Profile Attachment](antivirus-addition.png)
+![Security Profile Attachment](screenshots/antivirus-addition.png)
 
 * **Antivirus:** `default` (Applied to HTTP, FTP, and SMB payloads).
 * **Vulnerability Protection:** `default` (Inline exploit engine scanning decoded application traffic).
