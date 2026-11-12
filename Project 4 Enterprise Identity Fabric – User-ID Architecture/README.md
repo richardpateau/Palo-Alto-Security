@@ -67,11 +67,19 @@ To import the Active Directory hierarchy without hardcoding usernames:
    * Object Class: `group` | User Class: `person`
    * Group Include List: Enrolled `network-admins`, `network-users`, `vpn-users`, and `contractors`.
 
+**LDAP Profile**
+
 ![Palo Alto](screenshots/creating-ldap-profile.png)
+
+**Authentication Profile**
 
 ![Palo Alto](screenshots/creating-authentication-profile.png)
 
+**Creating Group Mapping**
+
 ![Palo Alto](screenshots/configuring-group-mapping.png)
+
+**Group Mapping --> Group Include List**
 
 ![Palo Alto](screenshots/configuring-group-mapping-group-list.png)
 
@@ -87,7 +95,7 @@ To import the Active Directory hierarchy without hardcoding usernames:
 
 ### Active Directory Group Enumeration & User Membership Resolution
 
-Before the firewall can enforce identity-based security policies, the User-ID daemon (`useridd`) must successfully query the Active Directory LDAP catalog, parse group Distinguished Names (DNs), and resolve domain accounts into their corresponding security groups### 2. Active Directory Group Enumeration & User-to-Group Resolution.
+Before the firewall can enforce identity-based security policies, the User-ID daemon (`useridd`) must successfully query the Active Directory LDAP catalog, parse group Distinguished Names (DNs), and resolve domain accounts into their corresponding security groups
 
 #### Active Directory Group Enumeration (`show user group list`)
 Verifies that the firewall discovered (CLI)
@@ -95,13 +103,6 @@ Verifies that the firewall discovered (CLI)
 Before identity-based security policies can evaluate user traffic, the firewall's User-ID engine (`useridd`) must successfully parse the LDAP catalog and map each domain account to its corresponding Active Directory security group.
 
 #### Active Directory Group and cached the four target security groups from OU=Meridian Groups:
-
-```text
-admin@PA-VM> show user group list
-
-cn=network-users,ou=meridian groups,dc=meridian,dc=local
-cn Discovery
-Confirming the firewall retrieved the 4 provisioned security groups from `OU=Meridian Groups`:
 
 ```text
 admin@=network-admins,ou=meridian groups,dc=meridian,dc=local
@@ -121,20 +122,6 @@ Total: 4
 #### User-to-Group Resolution Table (`show user user-ids all`)
 Verifies that individual domain user accounts are dynamically mappedcn=contractors,ou=meridian groups,dc=meridian,dc=local
 
-Total: 4
-* : Custom Group
-```
-
-#### B. Active Directory User-to-Group Resolution
-Confirming domain user accounts are actively mapped to to their respective security groups inside the firewall's local User-ID cache:
-
-```text
-admin@PA-VM> show user user-ids all
-
-User Name                     Vsys    Groups
---------------------------------------------------------------------------------
-meridian\vpn.test             vsys1   cn=vpn-users,ou=meridian groups,dc= their respective security groups in the User-ID state table:
-
 ```text
 admin@PA-VM> show user user-ids all
 
@@ -153,8 +140,6 @@ meridian\netadmin.test        vsys1   cn=network-admins,ou=meridian groups,dc=me
 Total: 5
 * : Custommeridian\netadmin.test        vsys1   cn=network-admins,ou=meridian groups,dc=mer Group
 ```
-
-> **Key Architectural Takeaway:** This in-memory resolution table powers **Role-Based Access Controlidian,dc=local
 
 ![Palo Alto](screenshots/show-user-user-ids-all.png)
 
@@ -231,7 +216,11 @@ Rule 4: Allow-DNS-NTP        (Source: any                        | Action: Allow
 Rule 5: Allow-Web-Browsing   (Source: any                        | Action: Allow)
 Rule 6: DENY_TRAFFIC         (Source: any                        | Action: Drop)
 ```
+**CLI**
+
 ![Palo Alto](screenshots/show-rulebase-security-rules.png)
+
+**GUI**
 
 ![Palo Alto](screenshots/security-rules-gui.png)
 
@@ -241,7 +230,7 @@ Rule 6: DENY_TRAFFIC         (Source: any                        | Action: Drop)
 
 **Source User: meridian\contractors**
 
-![Palo Alto](screenshots/source-user-contractors.png)
+![Palo Alto](screenshots/source-user-contractor.png)
 ---
 
 ## Empirical Verification & Live Identity Demonstrations
