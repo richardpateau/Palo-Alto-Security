@@ -312,23 +312,6 @@ admin@PA-VM> test security-policy-match from Trust to Untrust source 10.10.10.10
 > * **`Network-Admins`** hit Rule 2 (`Network-Admins-Allow`) with unrestricted application-default access.
 > * **`Standard Users`** fall through to Rule 5 (`Allow-Web-Browsing`), restricted strictly to business web applications.
 
-
-Verifying active group mapping state:
-```text
-admin@PA-VM> show user group-mapping state all
-
-Group Mapping(vsys1, type: active-directory): Corp-Group-Mapping
-Bind DN   : CN=Administrator,CN=Users,DC=meridian,DC=local
-Base      : DC=meridian,DC=local
-Servers   : configured 1 servers (172.16.109.133:389)
-Number of Groups: 4
-cn=network-admins,ou=meridian groups,dc=meridian,dc=local
-cn=network-users,ou=meridian groups,dc=meridian,dc=local
-cn=vpn-users,ou=meridian groups,dc=meridian,dc=local
-cn=contractors,ou=meridian groups,dc=meridian,dc=local
-```
-![Palo Alto](screenshots/active-directory-structure-phase-1.png)
-
 ---
 
 ### Live Captive Portal Interception & User Authentication
@@ -340,15 +323,15 @@ From client `10.10.10.10`:
    * Tested invalid credentials: The portal returned an inline validation error: `* Invalid username or password`.
    * Tested valid domain credentials (`richard.palo` / `netadmin.test`): Successfully authenticated.
 
-**Please enlarger for clearer video**
-
 ![Palo Alto](screenshots/login-required.png)
+
+**Please enlarger for clearer video**
 
 https://github.com/user-attachments/assets/4b6ed171-bf69-413c-8666-0297c39b66f0
 
 ---
 
-### IP-to-User State Table Binding (show user ip-user-mapping)
+### IP-to-User State Table Binding (`show user ip-user-mapping`)
 Inspecting the active User-ID table confirmed that `10.10.10.10` dynamically bound to the authenticated identity:
 
 ```text
@@ -396,7 +379,7 @@ https://github.com/user-attachments/assets/6566b337-a9b1-4e42-9089-cead5c8bcfe0
 #### Test B: Restricted Contractor Drop (contractor.test)
 **Source User: meridian/contractors**
 
-![Palo Alto](screenshots/source-user-contractors.png)
+![Palo Alto](screenshots/source-user-contractor.png)
 
 * User authenticated as `meridian\contractor.test`.
 
