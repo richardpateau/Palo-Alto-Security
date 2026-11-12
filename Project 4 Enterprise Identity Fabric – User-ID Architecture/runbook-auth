@@ -1,0 +1,551 @@
+Understood. We'll skip the authentication test and proceed with the actual Captive Portal configuration.
+Stage 2 — Configure the Trust interface
+
+Your Trust interface is ethernet1/2 (10.10.10.1/24).
+1. Enable User Identification on the Trust zone
+
+Navigate to:
+
+Network → Zones
+
+    Select your Trust zone.
+
+    Open the User Identification section.
+
+    Check Enable User Identification.
+
+    Click OK.
+
+This allows the firewall to perform User-ID mapping for traffic originating in the Trust zone.
+2. Create the Interface Management Profile
+
+Navigate to:
+
+Network → Network Profiles → Interface Mgmt
+
+Click Add.
+
+Configure:
+
+Setting
+	
+
+Value
+
+Name
+	
+
+TRUST-AUTH-PORTAL
+
+Ping
+	
+
+Disabled
+
+HTTP
+	
+
+Disabled
+
+HTTPS
+	
+
+Disabled
+
+SSH
+	
+
+Disabled
+
+Telnet
+	
+
+Disabled
+
+SNMP
+	
+
+Disabled
+
+Response Pages
+	
+
+Enabled
+
+User-ID
+	
+
+Enabled
+
+Leave the other services disabled.
+Palo Alto Networks Strata integration with Cloudi-Fi – Cloudi-Fi Knowledge Base
+
+Click OK.
+
+Palo Alto requires Response Pages on the incoming Layer 3 interface for Authentication Portal redirect mode. User-ID should also be enabled on this interface profile. 
+Palo Alto Networks TechDocs+2
+3. Attach the profile to ethernet1/2
+
+Navigate to:
+
+Network → Interfaces → Ethernet
+
+    Select ethernet1/2.
+
+    Open Advanced.
+
+    Find Other Info.
+
+    Set Management Profile to TRUST-AUTH-PORTAL.
+
+    Click OK.
+
+Your interface should now have:
+Interface: ethernet1/2
+IP:        10.10.10.1/24
+Zone:      Trust
+Management Profile: TRUST-AUTH-PORTAL
+4. Commit
+
+Click Commit.
+
+Stage 2 complete
+ once the commit succeeds.
+Stage 3 — Create the portal certificate
+
+Next we'll create a dedicated certificate for the Authentication Portal.
+
+We'll use:
+
+Item
+	
+
+Value
+
+Root CA
+	
+
+AUTH-PORTAL-ROOT-CA
+
+Portal certificate
+	
+
+AUTH-PORTAL-CERT
+
+Common Name
+	
+
+authportal
+
+Redirect hostname
+	
+
+authportal
+
+Portal interface IP
+	
+
+10.10.10.1
+
+The redirect hostname must resolve to the Trust interface IP. The client must trust the issuing CA to avoid browser certificate warnings. 
+Palo Alto Networks TechDocs+1
+
+For now, complete Stages 2.1–2.4 and send me a screenshot of the ethernet1/2 Advanced tab showing the attached management profile. Then I'll walk you through generating the CA and portal certificate in the correct order.
+
+
+
+Stage 3 — Create the Authentication Portal certificates
+Now we'll create a small private PKI specifically for your Captive Portal.
+
+We'll create two certificates:
+1. AUTH-PORTAL-ROOT-CA — the certificate authority that signs the portal certificate.
+2. AUTH-PORTAL-CERT — the actual server certificate presented by the firewall to the browser.
+This is the correct certificate chain for PAN-OS redirect mode. The portal certificate needs to identify the redirect hostname and the Trust interface IP. 
+
+Palo Alto Networks TechDocs+1
+
+1. Create the Root CA
+Navigate to:
+
+Device → Certificate Management → Certificates
+
+Click Generate.
+
+Configure:
+Field	Value
+Certificate Name	AUTH-PORTAL-ROOT-CA
+Common Name	AUTH-PORTAL-ROOT-CA
+Signed By	None
+Certificate Authority	Enabled
+Digest	SHA256
+Key Type	RSA
+Number of Bits	2048
+
+Leave optional fields blank. Click Generate.
+
+
+
+
+
+
+
+
+mbtechtalker.com
+
+
+You should now see AUTH-PORTAL-ROOT-CA in the certificate list.
+2. Generate the portal server certificate
+Stay under Device → Certificate Management → Certificates.
+
+Click Generate again.
+
+Configure:
+Field	Value
+Certificate Name	AUTH-PORTAL-CERT
+Common Name	authportal
+Signed By	AUTH-PORTAL-ROOT-CA
+Certificate Authority	Disabled
+Digest	SHA256
+Key Type	RSA
+Number of Bits	2048
+
+Add the IP address as a certificate attribute
+In Certificate Attributes, click Add:
+Field	Value
+Type	IP
+Value	10.10.10.1
+
+This IP SAN is important because the firewall redirects users to its Trust interface. Click Generate.
+
+You should now have:
+- AUTH-PORTAL-ROOT-CA
+- AUTH-PORTAL-CERT
+The portal certificate should show that it is signed by AUTH-PORTAL-ROOT-CA.
+3. Export the Root CA certificate
+The client browser needs to trust the CA that issued the portal certificate.
+1. Select AUTH-PORTAL-ROOT-CA.
+2. Click Export.
+3. Export the certificate in Base64/PEM format.
+4. Save it as:
+AUTH-PORTAL-ROOT-CA.pem
+
+
+Important: Export only the public CA certificate. Do not export its private key.
+
+On your Linux Mint workstation, import that CA into Firefox:
+1. Open Firefox Settings.
+2. Search for Certificates.
+3. Click View Certificates.
+4. Select Authorities.
+5. Click Import.
+6. Select AUTH-PORTAL-ROOT-CA.pem.
+7. Trust it to identify websites.
+4. Create the SSL/TLS Service Profile
+Back in the Palo Alto GUI:
+
+Device → Certificate Management → SSL/TLS Service Profile
+
+Click Add.
+
+Configure:
+Field	Value
+Name	AUTH-PORTAL-TLS
+Certificate	AUTH-PORTAL-CERT
+Min Version	TLSv1.2
+Max Version	Max
+
+Click OK.
+
+PAN-OS recommends using a signed server certificate and TLS 1.2 as the minimum version for this profile. 
+
+Palo Alto Networks TechDocs+1
+
+5. Configure DNS for the redirect hostname
+Your redirect hostname will be:
+authportal
+
+
+It must resolve to:
+10.10.10.1
+
+
+For your Linux Mint test workstation, if you don't have a DNS server handling this record, you can temporarily add it to /etc/hosts:
+sudo nano /etc/hosts
+
+
+Add:
+10.10.10.1 authportal
+
+
+Save the file.
+
+Stage 3 checklist
+Certificate setup
+
+0/6
+
+
+
+[ ] Created AUTH-PORTAL-ROOT-CA
+[ ] Created AUTH-PORTAL-CERT signed by the root CA
+[ ] Added IP SAN 10.10.10.1
+[ ] Exported and trusted the public root CA in Firefox
+[ ] Created AUTH-PORTAL-TLS
+[ ] Configured authportal to resolve to 10.10.10.1
+
+Next stage: We'll configure Device → User Identification → Authentication Portal Settings, enable Redirect mode, select AUTH-PORTAL-TLS, and set authportal as the Redirect Host.
+
+Official instructions: Palo Alto — Configure Authentication Portal.
+
+
+
+Great. Next we're configuring the actual Authentication Portal settings.
+
+# Stage 4 — Enable Authentication Portal
+
+Navigate to:
+
+Device → User Identification → Authentication Portal Settings
+
+Click the gear icon or Edit next to Authentication Portal.
+
+Configure these settings:
+
+| Setting                      | Value             |
+| ---------------------------- | ----------------- |
+| Enable Authentication Portal | Checked           |
+| Idle Timer                   | 15 minutes        |
+| Timer                        | 60 minutes        |
+| SSL/TLS Service Profile      | `AUTH-PORTAL-TLS` |
+| Mode                         | Redirect          |
+| Redirect Host                | `authportal`      |
+| Authentication Profile       | `Corp-AD-Auth`    |
+
+[Palo Alto Networks Strata integration with Cloudi-Fi – Cloudi-Fi Knowledge Base](https://images.openai.com/static-rsc-4/O1zmDQtc00JxfBy5-l6nlvWZ09COqyeWCtIgIRBE8rC-6G8eL1-fykoo1ql6mYRgPhBN6A829We6uEGyymBTdINfjZMRelW2igdZ0YJ5N1nBAPgdQLAujFmdEWR7nWhN3YKyzdyKaEZ87LCnEx3stw58Vc2lB5yH1W5XtmS-8So?purpose=inline)
+
+[help.cloudi-fi.com](https://help.cloudi-fi.com/hc/en-us/articles/9651186474909-Palo-Alto-Networks-Strata-integration-with-Cloudi-Fi?utm_source=chatgpt.com)
+
+Important: The Authentication Profile selected here is a global/default profile. When we create a custom web-form Authentication Enforcement object, we'll select `Corp-AD-Auth` there as well. That object-specific selection is what the Authentication policy will use.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://docs.paloaltonetworks.com\&sz=32)
+
+Palo Alto Networks TechDocs+2
+
+
+
+Click OK, then Commit.
+
+## Stage 5 — Create the Authentication Enforcement object
+
+Navigate to:
+
+Objects → Authentication
+
+Click Add.
+
+Configure:
+
+| Setting                | Value                                                        |
+| ---------------------- | ------------------------------------------------------------ |
+| Name                   | `AD-WEB-FORM`                                                |
+| Authentication Method  | `web-form`                                                   |
+| Authentication Profile | `Corp-AD-Auth`                                               |
+| Message                | `Enter your corporate AD credentials to access the network.` |
+
+Click OK.
+
+The web-form method is what presents the username/password login page to your client.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://docs.paloaltonetworks.com\&sz=32)
+
+Palo Alto Networks TechDocs+1
+
+
+
+Stop here and send me a screenshot of the Authentication Portal Settings after saving, or the Authentication Enforcement object if you've completed both. Next we'll create the Authentication policy for `10.10.10.10` and make sure it doesn't bypass your existing Security policy.
+
+
+Great. Next we're configuring the actual Authentication Portal settings.
+
+# Stage 4 — Enable Authentication Portal
+
+Navigate to:
+
+Device → User Identification → Authentication Portal Settings
+
+Click the gear icon or Edit next to Authentication Portal.
+
+Configure these settings:
+
+| Setting                      | Value             |
+| ---------------------------- | ----------------- |
+| Enable Authentication Portal | Checked           |
+| Idle Timer                   | 15 minutes        |
+| Timer                        | 60 minutes        |
+| SSL/TLS Service Profile      | `AUTH-PORTAL-TLS` |
+| Mode                         | Redirect          |
+| Redirect Host                | `authportal`      |
+| Authentication Profile       | `Corp-AD-Auth`    |
+
+[Palo Alto Networks Strata integration with Cloudi-Fi – Cloudi-Fi Knowledge Base](https://images.openai.com/static-rsc-4/O1zmDQtc00JxfBy5-l6nlvWZ09COqyeWCtIgIRBE8rC-6G8eL1-fykoo1ql6mYRgPhBN6A829We6uEGyymBTdINfjZMRelW2igdZ0YJ5N1nBAPgdQLAujFmdEWR7nWhN3YKyzdyKaEZ87LCnEx3stw58Vc2lB5yH1W5XtmS-8So?purpose=inline)
+
+[help.cloudi-fi.com](https://help.cloudi-fi.com/hc/en-us/articles/9651186474909-Palo-Alto-Networks-Strata-integration-with-Cloudi-Fi?utm_source=chatgpt.com)
+
+Important: The Authentication Profile selected here is a global/default profile. When we create a custom web-form Authentication Enforcement object, we'll select `Corp-AD-Auth` there as well. That object-specific selection is what the Authentication policy will use.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://docs.paloaltonetworks.com\&sz=32)
+
+Palo Alto Networks TechDocs+2
+
+
+
+Click OK, then Commit.
+
+## Stage 5 — Create the Authentication Enforcement object
+
+Navigate to:
+
+Objects → Authentication
+
+Click Add.
+
+Configure:
+
+| Setting                | Value                                                        |
+| ---------------------- | ------------------------------------------------------------ |
+| Name                   | `AD-WEB-FORM`                                                |
+| Authentication Method  | `web-form`                                                   |
+| Authentication Profile | `Corp-AD-Auth`                                               |
+| Message                | `Enter your corporate AD credentials to access the network.` |
+
+Click OK.
+
+The web-form method is what presents the username/password login page to your client.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://docs.paloaltonetworks.com\&sz=32)
+
+Palo Alto Networks TechDocs+1
+
+
+
+Stop here and send me a screenshot of the Authentication Portal Settings after saving, or the Authentication Enforcement object if you've completed both. Next we'll create the Authentication policy for `10.10.10.10` and make sure it doesn't bypass your existing Security policy.
+
+
+Excellent. Now we'll create the Authentication policy that triggers the login portal for your workstation.
+
+# Stage 6 — Create the Authentication policy
+
+Navigate to:
+
+Policies → Authentication
+
+Click Add.
+
+### General tab
+
+| Setting     | Value                                               |
+| ----------- | --------------------------------------------------- |
+| Name        | `AUTH-PORTAL-TRUST`                                 |
+| Description | `Authenticate Trust users against Active Directory` |
+
+### Source tab
+
+| Setting        | Value            |
+| -------------- | ---------------- |
+| Source Zone    | `Trust`          |
+| Source Address | `10.10.10.10/32` |
+| Source User    | `any`            |
+
+### Destination tab
+
+| Setting             | Value     |
+| ------------------- | --------- |
+| Destination Zone    | `Untrust` |
+| Destination Address | `any`     |
+
+### Service/URL Category tab
+
+| Setting      | Value |
+| ------------ | ----- |
+| Service      | `any` |
+| URL Category | `any` |
+
+### Actions tab
+
+Set:
+
+| Setting                    | Value         |
+| -------------------------- | ------------- |
+| Action                     | `Allow`       |
+| Authentication Enforcement | `AD-WEB-FORM` |
+
+Click OK.
+
+[Configuring Palo Alto Authentication Portal for PingID | PingID Administration Guide](https://images.openai.com/static-rsc-4/UKhGAfrfwQ1eJP4a7mMfhg-J0ZuS_qnY7B8PiDNjaKQTZ09L7Kgzr2nziI09LuEV7f-IMyQF0tCB1pHP7Lyn2I8h4B1fgYmKnuycAuIalR7KYxnEPPIC4zU-B3H549e-kh0vxNPhrzhtBy6vOgwTLkvfZ-BpZdEq5DYOwULSE-E?purpose=inline)
+
+[docs.pingidentity.com](https://docs.pingidentity.com/pingid/pingid_integrations/pid_configuring_palo_alto_authentication_portal.html?utm_source=chatgpt.com)
+
+## Stage 7 — Commit
+
+Click Commit.
+
+Your Authentication policy should now appear in the policy list.
+
+## Stage 8 — Check your Security policy
+
+Navigate to:
+
+Policies → Security
+
+Make sure your existing Trust-to-Untrust security policy still permits the intended internet traffic after authentication.
+
+The Authentication policy triggers authentication; it does not replace the Security policy that controls traffic.
+
+For the initial test, keep the Authentication rule scoped to `10.10.10.10/32`.
+
+## Stage 9 — Test the portal
+
+From your Linux Mint client (`10.10.10.10`):
+
+1. Open Firefox.
+2. Browse to:
+
+```
+http://neverssl.com
+```
+
+3. You should be redirected to the Authentication Portal.
+4. Enter your AD username and password.
+5. After successful authentication, browse to an internet destination again.
+
+On the Palo Alto CLI, check:
+
+```
+show user ip-user-mapping all
+```
+
+You want to see:
+
+```
+10.10.10.10    MERIDIAN\yourusername
+```
+
+Also check:
+
+Monitor → Logs → Authentication
+
+and:
+
+Monitor → Logs → Traffic
+
+Portfolio evidence
+
+Capture:
+
+- Authentication policy configuration.
+- Browser redirect to the portal.
+- Successful AD authentication.
+- User-ID IP-to-user mapping.
+- Traffic log showing the authenticated username.
+
+Send me a screenshot of your Authentication policy before testing. I want to check the rule fields and enforcement object selection before you commit, because a mismatch here can prevent the redirect from happening.
