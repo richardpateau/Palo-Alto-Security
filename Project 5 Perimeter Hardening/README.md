@@ -189,7 +189,7 @@ To simulate an adversary mapping open attack surfaces on the perimeter:
 
 **Monitor - Threat - TCP Port Scan**
 
-![Palo Alto](screenshots/monitor-threat-tcp-flood.png)
+![Palo Alto](screenshots/monitor-threat-tcp-port-scan.png)
 
 ![Palo Alto](screenshots/monitor-threat-tcp-flood-detailed-log.png)
 
