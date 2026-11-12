@@ -353,7 +353,7 @@ All tests were executed from the external workstation (`192.168.1.100`) targetin
         	discard-tcp-syn-with-data:          enabled: yes, packet dropped: 53
   	```
   
-![Palo Alto](screenshots/tcp-syn-with-data.png)
+![Palo Alto](screenshots/tcp-syn-with-data-command.png)
 
 **show zone-protection zone Untrust**
 
