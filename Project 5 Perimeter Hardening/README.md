@@ -38,7 +38,7 @@ The Zone Protection Profile (`Corp-Perimeter-Zone-Protection`) was constructed a
 set cli config-output-format set
 configure
 
-# 1. Flood Protection (SYN Cookies, UDP RED, ICMP RED)
+# 1. Flood Protection (SYN Cookies, UDP, ICMP)
 set network profiles zone-protection-profile Corp-Perimeter-Zone-Protection flood tcp-syn enable yes action syn-cookie alarm-rate 100 activate-rate 200 maximal-rate 400
 set network profiles zone-protection-profile Corp-Perimeter-Zone-Protection flood udp enable yes alarm-rate 100 activate-rate 200 maximal-rate 400
 set network profiles zone-protection-profile Corp-Perimeter-Zone-Protection flood icmp enable yes alarm-rate 50 activate-rate 100 maximal-rate 200
