@@ -121,6 +121,10 @@ tcp-syn            SYN cookie enabled: yes
 
 ![Palo Alto](screenshots/monitor-threat-tcp-flood.png)
 
+**Detailed Log Veiw - TCP Syn Flood**
+
+![Palo Alto](screenshots/monitor-threat-tcp-flood-detailed-log.png)
+
 
 #### Global DOS Delta Counter Verification
 Auditing active hardware drops during the peak of the flood:
@@ -191,7 +195,6 @@ To simulate an adversary mapping open attack surfaces on the perimeter:
 
 ![Palo Alto](screenshots/monitor-threat-tcp-port-scan.png)
 
-![Palo Alto](screenshots/monitor-threat-tcp-flood-detailed-log.png)
 
 #### B. Full UDP Port Sweep (`nmap -sU`)
 * **Attack Vector:** Scanned all 65,535 UDP ports at aggressive rates (`sudo nmap -Pn -sU -p- -T4 --min-rate 1000 192.168.1.200`).
