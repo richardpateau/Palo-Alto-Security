@@ -8,9 +8,15 @@ Every authentication handshake, LDAP directory query, IP-to-user mapping table, 
 
 **Live Execution: AD User 'richard.palo' Verified**
 
+https://github.com/user-attachments/assets/4b6ed171-bf69-413c-8666-0297c39b66f0
+
 **Live Execution: AD User 'contractor.test' packets being DROPPED**
 
+https://github.com/user-attachments/assets/c364c0c3-90b8-48c4-98d5-ccb11600b33a
+
 **Live Execution: AD User 'netadmin.test' Verified after new Security Policy (Network-Admins-Allow)**
+
+https://github.com/user-attachments/assets/6566b337-a9b1-4e42-9089-cead5c8bcfe0
 
 ---
 
@@ -349,6 +355,8 @@ From client `10.10.10.10`:
 
 ![Palo Alto](screenshots/login-required.png)
 
+https://github.com/user-attachments/assets/4b6ed171-bf69-413c-8666-0297c39b66f0
+
 ---
 
 ### IP-to-User State Table Binding (show user ip-user-mapping)
@@ -394,6 +402,7 @@ Using the exact same workstation IP (`10.10.10.10`), policy evaluation was teste
 
 **Please enlarge for clearer video**
 
+https://github.com/user-attachments/assets/6566b337-a9b1-4e42-9089-cead5c8bcfe0
 
 #### Test B: Restricted Contractor Drop (contractor.test)
 **Source User: meridian/contractors**
@@ -410,6 +419,8 @@ Using the exact same workstation IP (`10.10.10.10`), policy evaluation was teste
   * *Session End Reason:* **`policy-deny`**
 
 **Please enlarge for clearer video**
+
+https://github.com/user-attachments/assets/c364c0c3-90b8-48c4-98d5-ccb11600b33a
 
 ## Test C: DROP vs DENY: Client-Side Connection Behavior
 
