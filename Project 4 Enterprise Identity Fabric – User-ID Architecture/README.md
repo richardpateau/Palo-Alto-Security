@@ -428,7 +428,7 @@ Audited the dynamic logon tracking:
 * *IP:* `10.10.10.10` | *User:* `richard.palo` / `netadmin.test` / `contractor.test`
 * *Data Source:* `captive-portal` | *Source Type:* `authenticate` | *Timeout:* `3600s`.
 
-![Palo Alto](screenshots/monitor-traffic-with-user-id.png)
+![Palo Alto](screenshots/monitor-user-id-gui.png)
 
 #### Authentication Log Audit (Monitor > Logs > Authentication)
 Audited the raw authentication transactions:
@@ -443,7 +443,11 @@ In `Monitor > Logs > Traffic`, sessions that previously displayed `[blank]` now 
 * `10.10.10.10` ➔ `SOURCE USER: netadmin.test` ➔ `Action: allow` (Rule: `Network-Admins-Allow`).
 * `10.10.10.10` ➔ `SOURCE USER: meridian\contractor.test` ➔ `Action: drop` (Rule: `Contractors-DENY`).
 
+**Contractor Logs**
+
 ![Palo Alto](screenshots/monitor-traffic-logs-contractor-drops.png)
+
+**Netadmin Logs**
 
 ![Palo Alto](screenshots/monitor-traffic-netadmin-test.png)
 
@@ -471,41 +475,3 @@ A curated index of the primary engineering proofs, telemetry audits, and verific
 | **`monitor-logs-traffic-contractor-drop.png`** | Telemetry Log | Traffic log proving mid-flow drop of `contractor.test` under `Contractors-DENY`. |
 
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-## Understanding DROP vs DENY: Client-Side Connection Behavior
-
-### Browser Behavior: PR_CONNECT_RESET_ERROR Explained
-
-When the Palo Alto firewall denies HTTPS traffic with a TCP Reset action, Firefox displays:
-
-```
-Secure Connection Failed
-Error code: PR_CONNECT_RESET_ERROR
-
-The page you are trying to view cannot be shown because 
-the authenticity of the received data could not be verified.
-```
-
-This error occurs because:
-1. Client initiates TCP handshake to `neverssl.com:443`
-2. Firewall matches the **Contractors-DENY** security policy rule
-3. Firewall immediately sends a **TCP RST** packet to terminate the connection
-4. Firefox receives the reset before SSL/TLS negotiation completes
-5. Browser interprets this as a potential security threat or connection tampering
-
-
-
-
-
-
