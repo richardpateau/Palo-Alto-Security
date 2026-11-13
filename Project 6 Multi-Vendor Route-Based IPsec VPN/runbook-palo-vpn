@@ -1,0 +1,454 @@
+
+enable
+configure terminal
+
+!
+! 
+!
+interface Loopback0
+ description REMOTE-DATACENTER-LAN
+ ip address 172.16.50.1 255.255.255.0
+ no shutdown
+exit
+
+!
+! 
+!
+crypto ikev2 proposal IKEV2-PROPOSAL
+ encryption aes-cbc-256
+ integrity sha256
+ group 14
+exit
+
+crypto ikev2 policy IKEV2-POLICY
+ proposal IKEV2-PROPOSAL
+exit
+
+!
+! 3. IKEv2 pre-shared key
+!
+crypto ikev2 keyring IKEV2-KEYRING
+ peer PALO-ALTO
+  address 192.168.1.200
+  pre-shared-key local PaloAltoCiscoVPN2026!
+  pre-shared-key remote PaloAltoCiscoVPN2026!
+ exit
+exit
+
+!
+! 4. IKEv2 profile
+!
+crypto ikev2 profile IKEV2-PROFILE
+ match identity remote address 192.168.1.200 255.255.255.255
+ identity local address <CISCO_WAN_IP>
+ authentication local pre-share
+ authentication remote pre-share
+ keyring local IKEV2-KEYRING
+exit
+
+!
+! 5. IPsec Phase 2 transform set
+!
+crypto ipsec transform-set IPSEC-TS esp-aes 256 esp-sha256-hmac
+ mode tunnel
+exit
+
+!
+! 6. IPsec profile
+!
+crypto ipsec profile IPSEC-PROFILE
+ set transform-set IPSEC-TS
+ set ikev2-profile IKEV2-PROFILE
+ set pfs group14
+exit
+
+!
+! 7. Route-based IPsec tunnel interface
+!
+interface Tunnel1
+ description IPSEC-VTI-TO-PALO-ALTO
+ ip address 10.255.255.2 255.255.255.252
+ ip tcp adjust-mss 1360
+ tunnel source <CISCO_WAN_INTERFACE>
+ tunnel destination 192.168.1.200
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile IPSEC-PROFILE
+ no shutdown
+exit
+
+!
+! 8. Dynamic BGP peering
+!
+router bgp 65000
+ bgp router-id 10.255.255.2
+ bgp log-neighbor-changes
+ neighbor 10.255.255.1 remote-as 65001
+ network 172.16.50.0 mask 255.255.255.0
+exit
+
+end
+
+
+
+
+
+
+
+
+=========================================
+
+
+We'll configure the Palo Alto side through the GUI, using your existing PAN-OS 11.2.5, `ethernet1/1` WAN interface, and `default` virtual router.
+
+The configuration will use:
+
+- IKEv2 with AES-256-CBC, SHA-256, DH Group 14.
+- Route-based IPsec in tunnel mode.
+- `tunnel.1` with `10.255.255.1/30`.
+- eBGP AS 65001 peering with Cisco AS 65000.
+- A dedicated VPN security zone.
+- Security policies allowing only the intended inter-site traffic.
+
+These are standard PAN-OS site-to-site VPN components; dynamic routing requires an IP address on the tunnel interface.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://docs.paloaltonetworks.com\&sz=32)
+
+Palo Alto Networks TechDocs+3
+
+
+
+One prerequisite before you commit: The Cisco WAN IP and interface must be confirmed. Do not use `192.168.1.1` as the peer address; that's your upstream gateway, not automatically the Cisco router.
+
+I'll use `CISCO_WAN_IP` below as a placeholder. Replace it with the actual address.
+
+## Final topology and addressing
+
+| Item             | Palo Alto       | Cisco CSR1000v     |
+| ---------------- | --------------- | ------------------ |
+| WAN interface    | ethernet1/1     | Your WAN interface |
+| WAN IP           | 192.168.1.200   | `CISCO_WAN_IP`     |
+| Tunnel interface | tunnel.1        | Tunnel1            |
+| Tunnel IP        | 10.255.255.1/30 | 10.255.255.2/30    |
+| Virtual router   | default         | —                  |
+| Security zone    | VPN             | —                  |
+| BGP AS           | 65001           | 65000              |
+| BGP neighbor     | 10.255.255.2    | 10.255.255.1       |
+| Local LAN        | 10.10.10.0/24   | 172.16.50.0/24     |
+
+We'll use tunnel mode, not transport mode. This encrypts the routed data traffic between the two LANs.
+
+## 1. Create the VPN security zone
+
+Navigate to Network → Zones.
+
+1. Click Add.
+2. Name: `VPN`
+3. Type: `Layer3`
+4. Click OK.
+
+We'll attach `tunnel.1` to this zone. Keeping VPN traffic in a separate zone makes security policy enforcement and logging easier.
+
+## 2. Create the tunnel interface
+
+Navigate to Network → Interfaces → Tunnel.
+
+1. Click Add.
+2. Enter suffix `1` to create `tunnel.1`.
+
+Under the Config tab:
+
+| Field          | Value                            |
+| -------------- | -------------------------------- |
+| Virtual Router | `default`                        |
+| Security Zone  | `VPN`                            |
+| Comment        | `IPsec tunnel to Cisco CSR1000v` |
+
+Under the IPv4 tab:
+
+1. Click Add.
+2. Enter `10.255.255.1/30`.
+
+Click OK.
+
+[Palo Altoファイアウォールによるセキュアなアクセスの設定 - Cisco](https://images.openai.com/static-rsc-4/BoEevz5iordZvLnf1SzwFt2yw0gGQu_buTOsit_5Rt6WwfKh3hxuYY3k2iUhbXSsXwgEROGwZuqBi7zIg2-fApJhELa1Y-MSDILrnWeOByhugomRp4nIHycHJpWKo_8uGFeSnXJZgJ99Tis2RXsKkQNbxxXoj6c7HxQJORlfWHg?purpose=inline)
+
+[cisco.com](https://www.cisco.com/c/ja_jp/support/docs/security/secure-access/221589-configure-secure-access-with-palo-alto-f.html?utm_source=chatgpt.com)
+
+## 3. Create the IKE Crypto Profile
+
+Navigate to Network → Network Profiles → IKE Crypto.
+
+Click Add.
+
+Use:
+
+| Field          | Value               |
+| -------------- | ------------------- |
+| Name           | `IKEV2-CSR-PROFILE` |
+| DH Group       | `group14`           |
+| Encryption     | `aes-256-cbc`       |
+| Authentication | `sha256`            |
+| Key Lifetime   | `8 hours`           |
+
+If the interface presents lifetime fields separately, set the lifetime to 8 hours (28,800 seconds).
+
+Click OK.
+
+## 4. Create the IPsec Crypto Profile
+
+Navigate to Network → Network Profiles → IPsec Crypto.
+
+Click Add.
+
+| Field          | Value               |
+| -------------- | ------------------- |
+| Name           | `IPSEC-CSR-PROFILE` |
+| IPsec Protocol | ESP                 |
+| Encryption     | AES-256-CBC         |
+| Authentication | SHA-256             |
+| DH Group       | Group 14            |
+| Lifetime       | 1 hour              |
+
+Make sure the PFS/DH Group setting is enabled as Group 14.
+
+Click OK.
+
+These settings match the Cisco transform set and PFS configuration we designed.
+
+## 5. Create the IKE Gateway
+
+Navigate to Network → Network Profiles → IKE Gateways.
+
+Click Add.
+
+### General tab
+
+| Field             | Value           |
+| ----------------- | --------------- |
+| Name              | `IKE-GW-CSR`    |
+| Version           | `IKEv2 only`    |
+| Address Type      | IPv4            |
+| Interface         | `ethernet1/1`   |
+| Local IP Address  | `192.168.1.200` |
+| Peer Address Type | IP              |
+| Peer Address      | `CISCO_WAN_IP`  |
+
+### Authentication tab
+
+| Field          | Value                   |
+| -------------- | ----------------------- |
+| Authentication | Pre-Shared Key          |
+| Pre-Shared Key | `PaloAltoCiscoVPN2026!` |
+| Confirm Key    | Same key                |
+
+### Advanced Options tab
+
+- Enable NAT Traversal if the peers are behind NAT. If they communicate directly without NAT, it is not needed.
+- Enable Dead Peer Detection.
+- Use the default DPD interval and retry settings initially.
+- Leave the local and peer identification fields at their default IP-based behavior if your Cisco identity configuration uses the corresponding WAN IP addresses.
+
+Click OK.
+
+[Route-based Site-to-Site VPN IPsec between VyOS and Palo Alto — VyOS rolling release (current)](https://images.openai.com/static-rsc-4/MIxcIdsjdGWte6XEXg1f2bB7ZL3EUnNA_WqYEtj8JBdNV6QM0D2CfUW9VyrBbUoCEYKNi0w1ufCASHIxkSQKOjR_NloteWnllmVY8QSlu6APVzhaXH9pci-c_jFDopxzRnEhsTX-6KRzT5m1z7VzWk_XFZltDC_4hdkEVM0b-uk?purpose=inline)
+
+[docs.vyos.io](https://docs.vyos.io/en/rolling/configexamples/ipsec-pa-route-based.html?utm_source=chatgpt.com)
+
+## 6. Create the IPsec Tunnel
+
+Navigate to Network → IPsec Tunnels.
+
+Click Add.
+
+### General tab
+
+| Field                | Value               |
+| -------------------- | ------------------- |
+| Name                 | `IPSEC-TO-CSR`      |
+| Tunnel Interface     | `tunnel.1`          |
+| Type                 | Auto Key            |
+| IKE Gateway          | `IKE-GW-CSR`        |
+| IPSec Crypto Profile | `IPSEC-CSR-PROFILE` |
+
+Leave the IPsec mode set to Tunnel.
+
+Do not configure Proxy IDs for this route-based IKEv2 design.
+
+### Tunnel Monitor
+
+Initially, leave tunnel monitoring disabled. We'll enable it after the tunnel and routing work, using `10.255.255.2` as the destination.
+
+Click OK.
+
+[Site-to-Site VPN - PaloLearning](https://images.openai.com/static-rsc-4/dNHPg63CG_6tZ-23eBH64ZgaVqH9m2anbGVgeCPL0cCMuhm0Oo265YcBEiWzJ3UJxpVJjtDjHXIaWqWoNPcNbvhqQM-puT_MJMyTo4Ogx2U7e3vO6Ipjnuj6-N_jdLztGs794ylMKk0fyxKR9id0HJOkB2WDUQ3kHhVCKnIGhmE?purpose=inline)
+
+[skrrrm.github.io](https://skrrrm.github.io/PaloLearning/networking/site-to-site-vpn/?utm_source=chatgpt.com)
+
+## 7. Configure BGP on the Palo Alto
+
+Navigate to:
+
+Network → Virtual Routers → default → BGP
+
+Enable BGP.
+
+### General tab
+
+| Field     | Value          |
+| --------- | -------------- |
+| Enable    | Checked        |
+| Router ID | `10.255.255.1` |
+| Local AS  | `65001`        |
+
+### Peer Group tab
+
+Add a peer group:
+
+| Field  | Value            |
+| ------ | ---------------- |
+| Name   | `CSR-EBGP-GROUP` |
+| Type   | EBGP             |
+| Enable | Checked          |
+
+### Peer tab
+
+Inside the new peer group, add a peer:
+
+| Field                   | Value          |
+| ----------------------- | -------------- |
+| Name                    | `CSR-PEER`     |
+| Enable                  | Checked        |
+| Peer AS                 | `65000`        |
+| Peer Address            | `10.255.255.2` |
+| Local Address Interface | `tunnel.1`     |
+| Local Address IP        | `10.255.255.1` |
+
+Keep BGP authentication disabled for the initial build. We can add MD5 authentication after basic peering is established.
+
+### Export rules
+
+We need to advertise the Palo Alto LAN network to Cisco.
+
+Under the BGP export rules, add an export rule:
+
+| Field                | Value           |
+| -------------------- | --------------- |
+| Name                 | `EXPORT-PA-LAN` |
+| Enable               | Checked         |
+| Match address prefix | `10.10.10.0/24` |
+| Action               | Allow           |
+
+Use the GUI's prefix-list or address-prefix match field, depending on the PAN-OS 11.2.5 screen.
+
+If the GUI requires a prefix list first, create one containing `10.10.10.0/24` and reference it in the export rule.
+
+Important: The Cisco's BGP `network 172.16.50.0 mask 255.255.255.0` statement advertises the Cisco LAN toward Palo Alto. You don't need to redistribute all connected routes on either device.
+
+Click OK to save the BGP configuration.
+
+[BGP Usage and Behavior](https://images.openai.com/static-rsc-4/Gd76pva25kkkaQD_Tnyp5VkEQQ5S3uFaBR4f1-azFOsd_WGI0uvfRBVk7Gk_GPLaDXZOrhnVlANG7KS0ExOzXBGI5otvjCtq00oLW6ni70yTucTCvuhU9pDkP69fTjqx8XkMLVL3gKAO7xtem_2sG0K1_Djlo8xQLZPYqbdAEfw?purpose=inline)
+
+[docs.paloaltonetworks.com](https://docs.paloaltonetworks.com/openconfig/2-0/openconfig-admin/openconfig-models/bgp?utm_source=chatgpt.com)
+
+## 8. Configure security policies
+
+The tunnel's existence does not automatically authorize LAN traffic. We need security rules.
+
+Navigate to Policies → Security.
+
+Create two rules.
+
+### Rule 1: Palo Alto LAN to Cisco LAN
+
+| Field               | Value               |
+| ------------------- | ------------------- |
+| Name                | `PA-LAN-TO-CSR-LAN` |
+| Source Zone         | `Trust`             |
+| Source Address      | `10.10.10.0/24`     |
+| Destination Zone    | `VPN`               |
+| Destination Address | `172.16.50.0/24`    |
+| Application         | `any` initially     |
+| Service             | `any`               |
+| Action              | Allow               |
+| Log at Session End  | Enabled             |
+
+### Rule 2: Cisco LAN to Palo Alto LAN
+
+| Field               | Value               |
+| ------------------- | ------------------- |
+| Name                | `CSR-LAN-TO-PA-LAN` |
+| Source Zone         | `VPN`               |
+| Source Address      | `172.16.50.0/24`    |
+| Destination Zone    | `Trust`             |
+| Destination Address | `10.10.10.0/24`     |
+| Application         | `any` initially     |
+| Service             | `any`               |
+| Action              | Allow               |
+| Log at Session End  | Enabled             |
+
+Place these rules above any general deny rules.
+
+We'll narrow the allowed applications and services once connectivity works.
+
+2. Critical PAN-OS BGP Detail: Redistribution Profile
+
+
+In PAN-OS, adding an Export Rule alone will not advertise a directly connected subnet (10.10.10.0/24) into BGP unless it is first injected into the Local RIB via a Redistribution Rule.
+• Create Redistribution Profile: Go to Network → Virtual Routers → default → Redistribution Profiles → IPv4, click Add, name it REDIST-CONNECTED-LAN, check Enable, select Source Type Connect, and filter by interface or prefix 10.10.10.0/24.
+• Attach to BGP: Go to Network → Virtual Routers → default → BGP → Redist Rules, click Add, and select REDIST-CONNECTED-LAN. Once it is in the BGP table, your EXPORT-PA-LAN rule will advertise it to the Cisco router.
+## 9. Commit
+
+Before committing, check that:
+
+- `tunnel.1` belongs to zone `VPN`.
+- `tunnel.1` belongs to virtual router `default`.
+- Its IP is `10.255.255.1/30`.
+- The IKE Gateway references `ethernet1/1`.
+- The IPsec tunnel references `tunnel.1`.
+- BGP local AS is `65001`.
+- BGP peer AS is `65000`.
+- The BGP peer address is `10.255.255.2`.
+- The Cisco WAN peer address is correct.
+
+Click Commit.
+
+## 10. Verification after commit
+
+Once the Cisco side is configured and reachable, open the Palo Alto CLI.
+
+Run:
+
+```
+show vpn ike-sa
+```
+
+Expected: an established IKEv2 Security Association.
+
+```
+show vpn ipsec-sa
+```
+
+Expected: an active IPsec SA with packet counters.
+
+```
+show interface tunnel.1
+```
+
+Expected: tunnel interface information.
+
+```
+show routing protocol bgp summary
+```
+
+Expected: the Cisco peer `10.255.255.2` established and one or more prefixes received.
+
+```
+show routing route
+```
+
+Expected: a route for `172.16.50.0/24` through `tunnel.1`.
+
+The official Palo Alto configuration sequence is tunnel interface, IKE Gateway, IPsec tunnel, routing, and security policy.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://docs.paloaltonetworks.com\&sz=32)
+
