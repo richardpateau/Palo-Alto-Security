@@ -229,7 +229,7 @@ set network virtual-router default protocol bgp export-rule EXPORT-PA-LAN enable
 ```
 **BGP - General Tab**
 
-![Palo Alto](screenshots/creating-bgp-peer-group.png)
+![Palo Alto](screenshots/creating-bgp-general.png)
 
 **BGP Peer Group**
 
