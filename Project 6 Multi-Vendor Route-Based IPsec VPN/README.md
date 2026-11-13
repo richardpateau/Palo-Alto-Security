@@ -178,8 +178,11 @@ set network ike gateway IKE_GATEWAY_CSR local-address interface ethernet1/1 ip 1
 set network ike gateway IKE_GATEWAY_CSR peer-address ip 192.168.254.10
 set network ike gateway IKE_GATEWAY_CSR protocol ikev2 dpd enable yes
 ```
+**IKE Crypto Profile**
 
 ![Palo Alto](screenshots/creating-ike-profile.png)
+
+**IKE Gateway**
 
 ![Palo Alto](screenshots/creating-ike-gateway.png)
 
@@ -191,8 +194,12 @@ set network ipsec tunnel IPSEC_TUNNEL_CSR tunnel-interface tunnel.1
 set network ipsec tunnel IPSEC_TUNNEL_CSR auto-key ike-gateway IKE_GATEWAY_CSR
 set network ipsec tunnel IPSEC_TUNNEL_CSR auto-key ipsec-crypto-profile IPSEC_CSR_PROFILE
 ```
+**IPSec Crypto Profile**
+
 ![Palo Alto](screenshots/creating-ipsec-profile.png)
 
+**IPSec Tunnel**
+ 
 ![Palo Alto](screenshots/creating-ip-sec-tunnel.png)
 
 **Connected Subnet Redistribution into BGP Local-RIB**
@@ -200,11 +207,15 @@ set network ipsec tunnel IPSEC_TUNNEL_CSR auto-key ipsec-crypto-profile IPSEC_CS
 set network virtual-router default redistribution-profile LAN-REDIST priority 1 action redist filter type connect interface ethernet1/2 destination 10.10.10.0/24
 set network virtual-router default protocol bgp redist-rules LAN-REDIST enable yes address-family-identifier ipv4 route-table unicast metric 10
 ```
+**Creating Redistribution Profile**
+
 ![Palo Alto](screenshots/network-redistribution-profile.png)
+
+**Applying Profile to Redist Rules**
 
 ![Palo Alto](screenshots/creating-bgp-redist.png)
 
-**eBGP Peering Configuration (AS 65001 -> AS 65000)**
+**eBGP Peering Configuration (AS 65001 > AS 65000)**
 ```text
 set network virtual-router default protocol bgp enable yes
 set network virtual-router default protocol bgp router-id 10.255.255.1
