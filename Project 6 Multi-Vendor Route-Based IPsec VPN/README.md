@@ -116,7 +116,6 @@ crypto ipsec profile IPSEC-PROFILE
  set transform-set IPSEC-TS
  set ikev2-profile IKEV2-PROFILE
  set pfs group14
- set security-association lifetime seconds 3600
 exit
 ```
 
@@ -136,7 +135,7 @@ interface Tunnel1
  no shutdown
 exit
 ```
-![Palo Alto](screenshots/cisco-ios-crypto-transform-set.png)
+![Palo Alto](screenshots/cisco-ios-tunnel-1.png)
 
 **Dynamic Routing: eBGP Configuration**
 
