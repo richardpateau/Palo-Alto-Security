@@ -241,7 +241,6 @@ Before an endpoint can establish an IPSec tunnel, it must authenticate to the po
 
 ![GlobalProtect Agent Download](screenshots/download-agent-prompt.png)
 
-***
 ### Client Connection & IPSec Tunnel Telemetry
 
 The official GlobalProtect agent was launched on the remote Windows 10 endpoint (`DESKTOP-KF2G2J3`). The client authenticated against the portal, discovered the gateway, and established an IPSec-encapsulated tunnel:
@@ -332,7 +331,7 @@ To prove split-tunneling operates at the wire level:
     2     3 ms     2 ms     2 ms  10.10.10.50
   Trace complete.
   ```
-  *Result:* Traffic routed across the virtual adapter (`10.200.1.10`), traversing the encrypted tunnel to the internal server in **2 ms**. The Tunnel.2 interface does not contain an IP hence the *** in place of an IP address.
+  *Result:* Traffic routed across the virtual adapter (`10.200.1.10`), traversing the encrypted tunnel to the internal server in **2 ms**. The Tunnel.2 interface does not contain an IP hence the * * * in place of an IP address.
 
 ![Palo Alto](screenshots/tracert-to-web-server.png)
 
@@ -489,62 +488,3 @@ Inspecting the Traffic Monitor verified that policy decisions are enforced per u
 | **`monitor-user-id-logs.png`** | Identity Telemetry | User-ID log confirming automatic mapping of `10.200.1.x` via `vpn-client / globalprotect`. |
 
 ---
-
-### Troubleshooting & Engineering Lessons Learned
-
-| Challenge Encountered | Root Cause | Engineering Resolution |
-| :--- | :--- | :--- |
-| **Internal corporate application failed to load despite active VPN tunnel.** | Internal hosts on `10.10.10.0/24` lacked a static routing entry pointing return traffic for `10.200.1.0/24` back to the firewall. | Configured a **Source NAT rule (`GP-VPN`)** translating remote VPN pool traffic to the firewall's LAN gateway IP (`10.10.10.1`), ensuring symmetric return routing. |
-| **Client traffic defaulted to higher-latency SSL VPN tunnels.** | In restrictive firewall environments or when UDP port 4501 is blocked, GlobalProtect fails back to TLS tunnel encapsulation over TCP 443. | Ensured perimeter access policies permitted UDP 500 and UDP 4500, enabling the client to successfully negotiate native hardware-accelerated **IPSec/ESP**. |
-| **DNS resolution failed for internal corporate hostnames.** | The remote client inherited standard public DNS servers that could not resolve private enterprise domain names (`meridian.local`). | Configured the gateway's **Network Services** to push the internal Domain Controller (`172.16.109.133`) as Primary DNS to the virtual adapter. |
-| **Preventing contractors from accessing corporate databases over VPN.** | Standard VPN concentrators grant network-level Layer 3 access to any user possessing valid portal credentials. | Leveraged PAN-OS **Identity-Aware RBAC** to inspect the source user's Active Directory security group (`meridian\contractors`) on every packet, terminating connections at the firewall perimeter. |
-
-
-
-
-
-
-
-
-
-
-
-These two screenshots belong directly in **`### 2. Client Endpoint Authentication & IPSec Tunnel Telemetry`** (right after the agent download section). 
-
-They serve as the **official Windows client-side proof** that:
-1. The endpoint negotiated an active tunnel.
-2. The user (`netadmin.test`) authenticated successfully.
-3. The client selected **IPSec** as the transport protocol instead of higher-overhead SSL VPN.
-
-Here is the exact short section to paste into your `README.md`:
-
-***
-
-### 2. Client Endpoint Authentication & IPSec Tunnel Telemetry
-
-Following installation, the official GlobalProtect client was launched on the remote Windows 10 workstation (`DESKTOP-KF2G2J3`).
-
-```text
-  [ GlobalProtect Agent ] ──── 1. Connects to 192.168.1.200 ────> [ HQ-Gateway ]
-                          <─── 2. Auth: netadmin.test (AD)  ───
-                          <─── 3. Leases IP: 10.200.1.10    ───
-                          <─── 4. Transport: IPSec (ESP)    ───
-```
-
-1. **System Tray Connection Status:**
-   * The client agent successfully authenticated and established an active tunnel to **`HQ-Gateway`** (evaluated as the best available gateway).
-
-![GlobalProtect Client Connected](screenshots/gp-client-connected-status.png)
-
-2. **Tunnel Statistics & Virtual Adapter Validation:**
-   * **Assigned Virtual IP:** **`10.200.1.10`** (leased from pool `10.200.1.10–50`).
-   * **Active Protocol:** **`IPSec`** (confirming native hardware ESP encapsulation across the WAN).
-   * **Authenticated User:** `netadmin.test`.
-   * **Portal Reachability:** Active green status on portal anchor `192.168.1.200`.
-   * **Session Lifetime:** Active session registered with 29-day lifetime.
-
-![GlobalProtect Tunnel Statistics](screenshots/gp-client-tunnel-statistics.png)
-
-***
-
-*(From here, you transition directly into the PowerShell `ipconfig /all` and `route print` split-tunneling tests!)*
