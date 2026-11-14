@@ -62,9 +62,13 @@ Configured rule **`DNAT-Inbound-Web-2`** to handle both port forwarding and retu
 
 ![Palo Alto](screenshots/creating-nat-general.png)
 
+**NAT - Original Packet**
+
 ![Palo Alto](screenshots/creating-nat-original-packet.png)
 
-![Palo Alto](screenshots/security-rule-destination.png)
+**NAT - Translated Packet**
+
+![Palo Alto](screenshots/creating-nat-translated-packet.png)
 
 **CLI Verification**
 
@@ -164,9 +168,13 @@ Rather than relying on default read-only profiles, a dedicated profile named **`
 > **Forensic Engineering Proof:** Enabling `extended-capture` forces the Single-Pass engine to automatically carve and buffer the packet frames surrounding the exploit trigger. This produced the cleartext hex/ASCII PCAP dumps in the Threat Monitor, providing immediate proof of the decoded exploit string without requiring external packet taps.
 ```
 
-**Vulnerability Profile - Rules**
+**Vulnerability Imports**
 
 ![Palo Alto](screenshots/vulnerability-imports.png)
+
+**Vulnerability Profile - Rules**
+
+![Palo Alto](screenshots/vulnerability-profile-rules.png)
 
 **Vulnerability Profile - Exceptions**
 
@@ -174,6 +182,63 @@ Rather than relying on default read-only profiles, a dedicated profile named **`
 
 ## Empirical Verification & Live Threat Demonstrations
 
+### Inbound Perimeter Publishing: Positive Control (VIP Access) vs. Negative Control (DMZ Isolation)
+
+Before executing exploit tests, both authorized path transit and perimeter isolation boundaries were validated from the external client (`192.168.1.100`).
+
+![Palo Alto](screenshots/vip-dmz-isolation.png)
+
+#### A. Positive Control: Legitimate HTTPS Publishing via Firewall VIP
+Connecting to the published public VIP (`https://192.168.1.201:443`):
+
+* **CLI Diagnostic (`curl -vk`):**
+  ```bash
+  rich@rich-iMac:~$ curl -vk https://192.168.1.201
+  * Connected to 192.168.1.201 (192.168.1.201) port 443
+  * ALPN: curl offers h2,http/1.1
+  * TLSv1.3 (OUT), TLS handshake, Client hello (1):
+  * TLSv1.3 (IN), TLS handshake, Server hello (2):
+  * TLSv1.3 (IN), TLS handshake, Certificate (11):
+  * SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+  * Server certificate:
+  *   subject: CN=web.meridian.local
+  *   issuer: CN=Corp-Decryption-Sub-CA
+  < HTTP/1.1 200 OK
+  < Server: nginx
+  < Content-Length: 6197
+  ```
+* **Browser Verification:**
+  Navigating to `https://192.168.1.201` loaded the production web portal:
+  * **Application:** **`MERIDIAN FINANCIAL SERVICES - Enterprise Web Application Infrastructure`**
+  * **Status:** `SECURE WEB SERVICE ONLINE (Hostname: MERIDIAN-WEB1)`
+  * **Published Endpoint:** Public VIP `192.168.1.201:443` DNAT'd to Internal `10.10.10.50:443`.
+
+![Palo Alto](screenshots/curl-192.168.1.201.png)
+
+![Palo Alto](screenshots/accessing-web-server-from-192.168.1.100.png)
+
+---
+
+#### B. Negative Control: DMZ Perimeter Isolation (Direct Private IP Blocked)
+To prove that internal RFC 1918 workloads cannot be reached directly without traversing the firewall's reverse-proxy VIP:
+
+* **CLI Diagnostic (`curl -vk`):**
+  ```bash
+  rich@rich-iMac:~$ curl -vk https://10.10.10.50
+  *   Trying 10.10.10.50:443...
+  * connect to 10.10.10.50 port 443 from 192.168.1.100 port 50306 failed: Connection timed out
+  * Failed to connect to 10.10.10.50 port 443 after 133376 ms: Couldn't connect to server
+  curl: (28) Failed to connect to 10.10.10.50 port 443 after 133376 ms: Couldn't connect to server
+  ```
+* **Browser Experience:**
+  Attempting to load `http://10.10.10.50` failed with:
+  `Looks like there's a problem with this site - Firefox can't connect to the server at 10.10.10.50 (Timed Out)`.
+
+![Palo Alto](screenshots/curl-fail-to-10.10.10.50.png)
+
+![Palo Alto](screenshots/unable-to-visit-10.10.10.50.png)
+
+> **Architectural Isolation Proof:** The internal web server is completely isolated from the untrusted network. External access is strictly constrained to the firewall's published VIP (`192.168.1.201`), ensuring 100% of incoming connections are decrypted, sanitized, and inspected by the Palo Alto threat engine.
 ### Hardware Session Table Audit & Inbound Decryption State
 
 From external host `192.168.1.100`, incoming HTTPS sessions were initiated to `https://192.168.1.201:443`.
@@ -414,29 +479,63 @@ EOF
 
 
 
-### Custom Vulnerability Signatures & Forensic Extended Captures
+Here is the complete, uninterrupted section. Delete the broken part in your editor and paste this in:
 
-To demonstrate enterprise-grade virtual patching and tailored application security, five custom Layer 7 vulnerability signatures were engineered to target common OWASP Top 10 web attack vectors.
+***
 
-#### 1. Custom Threat Signatures (`Objects > Custom Objects > Vulnerability`)
-Each signature was defined with directional inspection (`client2server`) targeting server-side endpoints, assigning distinct internal Threat IDs in the 41000 range:
+### Inbound Perimeter Publishing: Positive Control (VIP Access) vs. Negative Control (DMZ Isolation)
 
-| Threat ID | Threat Name | Severity | Direction | Default Action | Attack Target / Regex Vector |
-| :---: | :--- | :--- | :--- | :--- | :--- |
-| **`41070`** | `Custom-SQLi-Attack` | Critical | `client2server` | `reset-both` | SQL boolean extraction (`UNION SELECT`) |
-| **`41071`** | `Custom-Path-Traversal` | Critical | `client2server` | `reset-both` | Relative path escapes (`/../../etc/passwd`) |
-| **`41072`** | `Custom-XSS-Attack` | High | `client2server` | `reset-both` | Client-side script injection (`<script>alert`) |
-| **`41073`** | `Custom-Command-Injection` | Critical | `client2server` | `reset-both` | Shell command chaining (`whoami;id`) |
-| **`41074`** | `Custom-Log4Shell-JNDI` | Critical | `client2server` | `reset-both` | Remote JNDI lookups (`${jndi:ldap://...}`) |
+Before executing exploit tests, both authorized path transit and perimeter isolation boundaries were validated from the external client (`192.168.1.100`).
 
-#### 2. Threat Profile Hardening & Forensic Capture (`Web-Vuln-Profile`)
-Rather than relying on default read-only profiles, a dedicated profile named **`Web-Vuln-Profile`** was constructed:
-* **Severity Rule Alignment:** Enforced **`reset-both`** across all critical, high, and medium server-targeted vulnerability classes.
-* **Exceptions & Extended Packet Captures:**
-  Under the **Exceptions** tab, each custom signature (41070–41074) was enabled and configured with **`Packet Capture: extended-capture`**. 
-
-> **Forensic Engineering Proof:** Enabling `extended-capture` forces the Single-Pass engine to automatically carve and buffer the packet frames surrounding the exploit trigger. This produced the cleartext hex/ASCII PCAP dumps in the Threat Monitor, providing immediate proof of the decoded exploit string without requiring external packet taps.
+```text
+  [ External User (192.168.1.100) ] ─── 1. Access https://192.168.1.201 ───> [ PA-VM VIP ] ───> ALLOW (200 OK)
+  [ External User (192.168.1.100) ] ─── 2. Access https://10.10.10.50  ───> [ Direct IP ] ───> DROP (Timed Out)
 ```
+
+#### A. Positive Control: Legitimate HTTPS Publishing via Firewall VIP
+Connecting to the published public VIP (`https://192.168.1.201:443`):
+
+* **CLI Diagnostic (`curl -vk`):**
+  ```bash
+  rich@rich-iMac:~$ curl -vk https://192.168.1.201
+  * Connected to 192.168.1.201 (192.168.1.201) port 443
+  * ALPN: curl offers h2,http/1.1
+  * TLSv1.3 (OUT), TLS handshake, Client hello (1):
+  * TLSv1.3 (IN), TLS handshake, Server hello (2):
+  * TLSv1.3 (IN), TLS handshake, Certificate (11):
+  * SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+  * Server certificate:
+  *   subject: CN=web.meridian.local
+  *   issuer: CN=Corp-Decryption-Sub-CA
+  < HTTP/1.1 200 OK
+  < Server: nginx
+  < Content-Length: 6197
+  ```
+* **Browser Verification:**
+  Navigating to `https://192.168.1.201` loaded the production web portal:
+  * **Application:** **`MERIDIAN FINANCIAL SERVICES - Enterprise Web Application Infrastructure`**
+  * **Status:** `SECURE WEB SERVICE ONLINE (Hostname: MERIDIAN-WEB1)`
+  * **Published Endpoint:** Public VIP `192.168.1.201:443` DNAT'd to Internal `10.10.10.50:443`.
+
+![Inbound Web Portal Online](screenshots/inbound-web-portal-online.png)
 
 ---
 
+#### B. Negative Control: DMZ Perimeter Isolation (Direct Private IP Blocked)
+To prove that internal RFC 1918 workloads cannot be reached directly without traversing the firewall's reverse-proxy VIP:
+
+* **CLI Diagnostic (`curl -vk`):**
+  ```bash
+  rich@rich-iMac:~$ curl -vk https://10.10.10.50
+  *   Trying 10.10.10.50:443...
+  * connect to 10.10.10.50 port 443 from 192.168.1.100 port 50306 failed: Connection timed out
+  * Failed to connect to 10.10.10.50 port 443 after 133376 ms: Couldn't connect to server
+  curl: (28) Failed to connect to 10.10.10.50 port 443 after 133376 ms: Couldn't connect to server
+  ```
+* **Browser Experience:**
+  Attempting to load `http://10.10.10.50` failed with:
+  `Looks like there's a problem with this site - Firefox can't connect to the server at 10.10.10.50 (Timed Out)`.
+
+![Direct Private IP Timeout](screenshots/direct-private-ip-timeout.png)
+
+> **Architectural Isolation Proof:** The internal web server is completely isolated from the untrusted network. External access is strictly constrained to the firewall's published VIP (`192.168.1.201`), ensuring 100% of incoming connections are decrypted, sanitized, and inspected by the Palo Alto threat engine.
