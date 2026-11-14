@@ -379,15 +379,15 @@ In every instance, the firewall decrypted the request, identified the malicious 
 
 **Command Injection Execution**
 
-![Palo Alto](screenshots/directory-traversal-command.png)
+![Palo Alto](screenshots/command-injection-config.png)
 
 **Monitor Threat Logs**
 
-![Palo Alto](screenshots/monitor-threat-logs-directory-traversal.png)
+![Palo Alto](screenshots/monitor-threat-logs-command-injection.png)
 
 **PCAP Details**
 
-![Palo Alto](screenshots/packet-capture-directory-traversal.png)
+![Palo Alto](screenshots/packet-capture-cmd-injection.png)
 
 ---
 
