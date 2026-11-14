@@ -6,6 +6,14 @@ Remote workers running the official GlobalProtect client on Windows 10 (`192.168
 
 Every authentication transaction, gateway registration, client route table entry, split-tunnel trace, and policy decision was verified using the official GlobalProtect Agent (v6.3.3), Windows PowerShell routing diagnostics, PAN-OS gateway state tables (`show global-protect-gateway current-user`), User-ID telemetry, and firewall traffic monitors.
 
+**Live Execution: netadmin.test sign in**
+
+https://github.com/user-attachments/assets/2cb86997-4cac-4366-abcd-43bab55369f1
+
+**Live Execution: contractor.test sign in**
+
+https://github.com/user-attachments/assets/2d46047c-7651-409c-b40f-0d82866df282
+
 ---
 
 ## Architecture & Remote Access Peering Fabric
@@ -356,6 +364,8 @@ To prove split-tunneling operates at the wire level:
 
 **Please enlarge for a clearer video**
 
+https://github.com/user-attachments/assets/2cb86997-4cac-4366-abcd-43bab55369f1
+
 #### Test B: Restricted Contractor Drop (`meridian\contractor.test`)
 * **Identity Context:** Re-authenticated the client using `meridian\contractor.test` (assigned virtual IP `10.200.1.11`).
 * **Action:** Attempted to access the identical application web URL `http://10.10.10.50`:
@@ -368,7 +378,9 @@ To prove split-tunneling operates at the wire level:
 
 ![Palo Alto](screenshots/web-server-unavailable.png)
 
-**Plese enlarge for a clearer video**
+ **Please enlarge for a clearer video**
+
+https://github.com/user-attachments/assets/2d46047c-7651-409c-b40f-0d82866df282
 
 ---
 
