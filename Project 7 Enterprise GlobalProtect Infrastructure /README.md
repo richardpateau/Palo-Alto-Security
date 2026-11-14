@@ -125,7 +125,7 @@ A dedicated server certificate was provisioned with the gateway's IP address emb
 
 **Global Protect Gateway Configuration - Configuring Authentication**
 
-![Palo Alto](screenshots/creating-global-protect-portal-client-authentication.png)
+![Palo Alto](screenshots/creating-global-protect-gateway-configuring-authentication.png)
 
 **Global Protect Gateway Configuration - Authentication Overview**
 
@@ -145,7 +145,7 @@ A dedicated server certificate was provisioned with the gateway's IP address emb
 
 **Global Protect Portal - Configuring Authentication**
 
-![Palo Alto](screenshots/creating-global-protect-portal.png)
+![Palo Alto](screenshots/creating-global-protect-portal-creating-authentication.png)
 
 **Global Protect Portal - Authentication Tab Overview**
 
