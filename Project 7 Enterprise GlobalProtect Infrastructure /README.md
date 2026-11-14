@@ -46,6 +46,8 @@ A dedicated server certificate was provisioned with the gateway's IP address emb
 
 ![Palo Alto](screenshots/creating-certificate.png)
 
+**SSL/TLS Service Profile**
+
 ![Palo Alto](screenshots/creating-global-protect-ssl-tls-service-profile.png)
 
 ### Interface, Zone & Return Path Source NAT
@@ -123,7 +125,7 @@ A dedicated server certificate was provisioned with the gateway's IP address emb
 
 **Global Protect Gateway Configuration - Configuring Authentication**
 
-![Palo Alto](screenshots/creating-global-protect-gateway-client-authentication.png)
+![Palo Alto](screenshots/creating-global-protect-portal-client-authentication.png)
 
 **Global Protect Gateway Configuration - Authentication Overview**
 
