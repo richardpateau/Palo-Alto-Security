@@ -1,0 +1,33 @@
+<threat version="11.2.0">
+  <vulnerability>
+    <entry name="41073">
+      <signature>
+        <standard>
+          <entry name="CmdInj-Pattern">
+            <and-condition>
+              <entry name="And1">
+                <or-condition>
+                  <entry name="Or1">
+                    <operator>
+                      <pattern-match>
+                        <pattern>;id</pattern>
+                        <context>http-req-params</context>
+                      </pattern-match>
+                    </operator>
+                  </entry>
+                </or-condition>
+              </entry>
+            </and-condition>
+            <scope>protocol-data-unit</scope>
+          </entry>
+        </standard>
+      </signature>
+      <default-action>
+        <reset-both/>
+      </default-action>
+      <threatname>Custom-Command-Injection</threatname>
+      <severity>critical</severity>
+      <direction>client2server</direction>
+    </entry>
+  </vulnerability>
+</threat>
