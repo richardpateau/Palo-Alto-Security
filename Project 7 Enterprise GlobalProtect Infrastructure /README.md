@@ -467,26 +467,24 @@ Inspecting the Traffic Monitor verified that policy decisions are enforced per u
 
 ---
 
-## Key Artifact Index & Troubleshooting
-
 ### Key Artifact Index
 
 | Artifact File | Category | Technical Proof & Validation |
 | :--- | :--- | :--- |
-| **`gp-portal-login-screen.png`** | User Interface | Web browser accessing `https://192.168.1.200/global-protect/login.esp`. |
-| **`gp-portal-software-download.png`** | Agent Deployment | Portal landing page serving Windows and Mac GlobalProtect agents. |
-| **`gp-client-connected-status.png`** | Endpoint Status | Official GlobalProtect agent showing `Connected` to `HQ-Gateway` via IPSec. |
-| **`win10-ipconfig-virtual-adapter.png`** | Endpoint Telemetry | PowerShell `ipconfig /all` verifying `PANGP Virtual Adapter` leased IP `10.200.1.10`. |
-| **`win10-route-print-split-tunnel.png`** | Routing Table | PowerShell `route print` verifying corporate routes injected while `0.0.0.0/0` stays local. |
-| **`win10-tracert-corporate-vs-dia.png`** | Path Diagnostic | Side-by-side traceroutes proving corporate traffic uses VPN and internet uses local ISP. |
-| **`internal-web-app-admin-allowed.png`** | Application Access | Browser rendering `Meridian Financial Services` app online for `netadmin.test`. |
-| **`internal-web-app-contractor-denied.png`** | Security Proof | Browser timing out with `ERR_CONNECTION_TIMED_OUT` when accessed by contractor. |
-| **`pa-cli-gp-gateway-current-user.png`** | Gateway State | `show global-protect-gateway current-user` verifying `ESP: exist` and active client details. |
-| **`pa-cli-gp-gateway-flow-status.png`** | Gateway State | `show global-protect-gateway flow` verifying tunnel binding between `192.168.1.200` and `tunnel.2`. |
-| **`monitor-logs-gp-events.png`** | Telemetry Log | GlobalProtect log tracking authentication, IP assignment, and tunnel negotiation stages. |
-| **`monitor-logs-traffic-gp-admin-allow.png`** | Security Policy | Traffic monitor auditing permitted sessions matching `Global-Protect-Admins-Full-Access`. |
-| **`monitor-logs-traffic-gp-contractor-deny.png`** | Security Policy | Traffic monitor auditing dropped sessions matching `Global-Protect-Contractors-Deny`. |
-| **`monitor-logs-userid-gp-mapping.png`** | Identity Telemetry | User-ID log confirming automatic mapping of `10.200.1.x` via `vpn-client / globalprotect`. |
+| **`palo-alto-sign-in-page.png`** | User Interface | Web browser accessing `https://192.168.1.200/global-protect/login.esp`. |
+| **`download-agent-prompt.png`** | Agent Deployment | Portal landing page serving Windows and Mac GlobalProtect agents. |
+| **`palo-alto-connected.png`** | Endpoint Status | Official GlobalProtect agent showing `Connected` to `HQ-Gateway` via IPSec. |
+| **`powershell-ipconfig-all.png`** | Endpoint Telemetry | PowerShell `ipconfig /all` verifying `PANGP Virtual Adapter` leased IP `10.200.1.10`. |
+| **`powershell-route-print.png`** | Routing Table | PowerShell `route print` verifying corporate routes injected while `0.0.0.0/0` stays local. |
+| **`tracert-goes-to-isp-instead-neverssl.png`** | Path Diagnostic | Traceroute proving internet traffic bypasses the VPN and uses the local ISP (DIA). |
+| **`web-server-reached.png`** | Application Access | Browser successfully rendering the internal application for `netadmin.test`. |
+| **`web-server-unavailable.png`** | Security Proof | Browser timing out with `ERR_CONNECTION_TIMED_OUT` when accessed by `contractor.test`. |
+| **`show-global-protect-gateway-current-user.png`** | Gateway State | CLI `show global-protect-gateway current-user` verifying `ESP: exist` and active client details. |
+| **`show-global-protect-gateway-flow.png`** | Gateway State | CLI `show global-protect-gateway flow` verifying tunnel binding between interface and `tunnel.2`. |
+| **`monitor-global-protect-logs-netadmin.png`** | Telemetry Log | GlobalProtect log tracking authentication, IP assignment, and tunnel negotiation stages. |
+| **`monitor-traffic-logs-netadmin.png`** | Security Policy | Traffic monitor auditing permitted sessions matching `Global-Protect-Admins-Full-Access`. |
+| **`monitor-traffic-logs-contractor.png`** | Security Policy | Traffic monitor auditing dropped sessions matching `Global-Protect-Contractors-Deny`. |
+| **`monitor-user-id-logs.png`** | Identity Telemetry | User-ID log confirming automatic mapping of `10.200.1.x` via `vpn-client / globalprotect`. |
 
 ---
 
