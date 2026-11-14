@@ -149,7 +149,7 @@ A dedicated server certificate was provisioned with the gateway's IP address emb
 
 **Global Protect Portal - Authentication Tab Overview**
 
-![Palo Alto](screenshots/creating-global-protect-portal-creating-authentication.png)
+![Palo Alto](screenshots/creating-global-protect-gateway-authentication-tab.png)
 
 **Global Protect Portal - Agent Tab (Exeternal Gateway Configuration)**
 
