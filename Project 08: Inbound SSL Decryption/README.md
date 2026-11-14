@@ -42,7 +42,7 @@ Every stage—from Destination NAT (DNAT) and symmetric return SNAT to cleartext
 
 ![Palo Alto](screenshots/network-interfaces-second-ip-assigned.png)
 
-**Creating Certificate***
+**Creating Certificate**
 
 ![Palo Alto](screenshots/creating-certificate.png)
 
@@ -166,7 +166,6 @@ Rather than relying on default read-only profiles, a dedicated profile named **`
   Under the **Exceptions** tab, each custom signature (41070–41074) was enabled and configured with **`Packet Capture: extended-capture`**. 
 
 > **Forensic Engineering Proof:** Enabling `extended-capture` forces the Single-Pass engine to automatically carve and buffer the packet frames surrounding the exploit trigger. This produced the cleartext hex/ASCII PCAP dumps in the Threat Monitor, providing immediate proof of the decoded exploit string without requiring external packet taps.
-```
 
 **Vulnerability Imports**
 
