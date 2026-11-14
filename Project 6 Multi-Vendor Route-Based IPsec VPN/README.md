@@ -243,12 +243,13 @@ set network virtual-router default protocol bgp export-rule EXPORT-PA-LAN enable
 
 ![Palo Alto](screenshots/creating-bgp-export-rule.png)
 
+**Export Rule: Match Tab**
+
 ![Palo Alto](screenshots/creating-bgp-export-rule-1.png)
 
 **Inter-Zone Security Policies**
 
 ```text
-# 6. Inter-Zone Security Policies
 set rulebase security rules CSR-VPN-TO-VPN from VPN to VPN source 10.255.255.0/30 destination 10.255.255.0/30 application bgp service any action allow
 set rulebase security rules PA-LAN-TO-CSR-LAN from Trust to VPN source 10.10.10.0/24 destination [ 20.20.20.0/24 172.16.50.0/24 ] application any service any action allow
 set rulebase security rules CSR-LAN-TO-PA-LAN from VPN to Trust source [ 20.20.20.0/24 172.16.50.0/24 ] destination 10.10.10.0/24 application any service any action allow
@@ -257,27 +258,27 @@ set rulebase security rules CSR-LAN-TO-PA-LAN from VPN to Trust source [ 20.20.2
 
 ![Palo Alto](screenshots/security-rule-overview.png)
 
-**Security Rule: Palo Alto LAN ---> CSR LAN**
+**Security Rule: Palo Alto LAN > CSR LAN**
 
 ![Palo Alto](screenshots/creating-security-rule.png)
 
-**Palo Alto LAN ---> CSR LAN - Source: 10.10.10.0/24**
+**Palo Alto LAN > CSR LAN - Source: 10.10.10.0/24**
 
 ![Palo Alto](screenshots/creating-security-rule-source.png)
 
-**Palo Alto LAN ---> CSR LAN - Destination 20.20.20.0/24, 172.16.50.0**
+**Palo Alto LAN > CSR LAN - Destination 20.20.20.0/24, 172.16.50.0**
 
 ![Palo Alto](screenshots/creating-security-rule-destination.png)
 
-**Security Rule: CSR LAN ---> Palo Alto LAN**
+**Security Rule: CSR LAN > Palo Alto LAN**
 
 ![Palo Alto](screenshots/creating-2-security-rule.png)
 
-**CSR LAN ---> Palo Alto LAN - Source 20.20.20.0/24, 172.16.50.0/24**
+**CSR LAN > Palo Alto LAN - Source 20.20.20.0/24, 172.16.50.0/24**
 
 ![Palo Alto](screenshots/creating-2-security-rule-source.png)
 
-**CSR LAN ---> Palo Alto - Destination 10.10.10.10/24**
+**CSR LAN > Palo Alto - Destination 10.10.10.10/24**
 
 ![Palo Alto](screenshots/creating-2-security-rule-destination.png)
 
@@ -372,7 +373,7 @@ GwID/client IP  TnID  Peer-Address       Tunnel(Gateway)                 SPI(in)
 
 ### Dynamic eBGP Peering & Route Distribution
 
-#### BGP Session Establishment (Cisco CSR)
+#### BGP Session Establishment (Cisco IOS)
 ```text
 Router# show ip bgp summary
 BGP router identifier 10.255.255.2, local AS number 65000
@@ -512,23 +513,25 @@ A curated index of the primary engineering proofs, packet traces, and configurat
 
 | Artifact File | Category | Technical Proof & Validation |
 | :--- | :--- | :--- |
-| **`cisco-crypto-ikev2-session.png`** | Cisco Telemetry | `show crypto ikev2 session` displaying active IKEv2 SA, DH Group 14, and SPIs. |
-| **`cisco-crypto-ipsec-sa.png`** | Cisco Telemetry | `show crypto ipsec sa` displaying 839 encrypted and 514 decrypted packets on Tunnel1. |
-| **`cisco-bgp-summary-established.png`**| Cisco Telemetry | `show bgp sum` confirming peer `10.255.255.1` (AS 65001) in state `Established`. |
-| **`cisco-ip-bgp-table-pfx.png`** | Cisco Routing | `show ip bgp` displaying route `10.10.10.0/24` learned dynamically from Palo Alto. |
-| **`pa-ike-crypto-profile.png`** | PAN-OS Config | IKE Crypto Profile `IKEV2_CSR_PROFILE` enforcing AES-256-CBC, SHA-256, DH Group 14. |
-| **`pa-ipsec-crypto-profile.png`** | PAN-OS Config | IPsec Crypto Profile `IPSEC_CSR_PROFILE` enforcing ESP, AES-256, SHA-256, PFS DH14. |
-| **`pa-tunnel-interface-config.png`** | PAN-OS Config | Assigning `tunnel.1` (`10.255.255.1/30`) to virtual router `default` and zone `VPN`. |
-| **`pa-ipsec-tunnel-active-gui.png`** | PAN-OS Status | IPsec Tunnels monitor displaying green operational indicators for IKE and Tunnel status. |
-| **`pa-cli-show-vpn-ike-sa.png`** | PAN-OS CLI | `show vpn ike-sa` confirming mature child SA and SPIs `BD359D70` / `B4E8D71F`. |
-| **`pa-cli-show-vpn-ipsec-sa.png`** | PAN-OS CLI | `show vpn ipsec-sa` confirming active SA lifetime and hardware tunnel binding. |
-| **`pa-bgp-redistribution-lan.png`** | PAN-OS Routing | Redistribution profile `LAN-REDIST` injecting connected LAN `10.10.10.0/24` into BGP. |
-| **`pa-cli-bgp-rib-out-adv.png`** | PAN-OS CLI | `show routing protocol bgp rib-out` verifying prefix `10.10.10.0/24` advertised to peer. |
-| **`pa-fib-routes-installed.png`** | PAN-OS Routing | Forwarding table confirming dynamic BGP routes `20.20.20.0/24` installed via `tunnel.1`. |
-| **`pa-security-rules-vpn-lan.png`** | Security Policy | Inter-zone policies permitting bidirectional traffic between `Trust` and `VPN`. |
-| **`wireshark-ikev2-handshake.png`** | Wire Trace | Packet trace capturing `IKE_SA_INIT` and `IKE_AUTH` exchange sequences. |
-| **`wireshark-esp-encapsulation.png`**| Wire Trace | Packet trace capturing ESP-encapsulated payloads matching `SPI=0xb4e8d71f`. |
-| **`traffic-log-interzone-traffic.png`**| Telemetry Log | Traffic monitor confirming end-to-end ping flows between `Trust` and `VPN` zones. |
-| **`client-ping-continuous-proof.png`** | Data Plane Proof | Workstation terminal confirming continuous ping to `20.20.20.10` with zero packet loss. |
+| **`cisco-ios-show-crypto-ikev2-session.png`** | Cisco Telemetry | `show crypto ikev2 session` displaying active IKEv2 SA, DH Group 14, and SPIs. |
+| **`cisco-ios-show-crypto-ipsec-sa.png`** | Cisco Telemetry | `show crypto ipsec sa` displaying 839 encrypted and 514 decrypted packets on Tunnel1. |
+| **`cisco-ios-sh-bgp-summary.png`**| Cisco Telemetry | `show bgp sum` confirming peer `10.255.255.1` (AS 65001) in state `Established`. |
+| **`cisco-ios-sh-ip-bgp.png`** | Cisco Routing | `show ip bgp` displaying route `10.10.10.0/24` learned dynamically from Palo Alto. |
+| **`creating-ike-profile.png`** | PAN-OS Config | IKE Crypto Profile `IKEV2_CSR_PROFILE` enforcing AES-256-CBC, SHA-256, DH Group 14. |
+| **`creating-ipsec-profile.png`** | PAN-OS Config | IPsec Crypto Profile `IPSEC_CSR_PROFILE` enforcing ESP, AES-256, SHA-256, PFS DH14. |
+| **`palo-tunnel-1-ip-address.png`** | PAN-OS Config | Assigning `tunnel.1` (`10.255.255.1/30`) to virtual router `default` and zone `VPN`. |
+| **`network-ipsec-tunnels-status.png`** | PAN-OS Status | IPsec Tunnels monitor displaying green operational indicators for IKE and Tunnel status. |
+| **`palo-cli-show-vpn-ike-sa.png`** | PAN-OS CLI | `show vpn ike-sa` confirming mature child SA and SPIs `BD359D70` / `B4E8D71F`. |
+| **`palo-cli-show-vpn-ipsec-sa.png`** | PAN-OS CLI | `show vpn ipsec-sa` confirming active SA lifetime and hardware tunnel binding. |
+| **`network-redistribution-profile.png`** | PAN-OS Routing | Redistribution profile `LAN-REDIST` injecting connected LAN `10.10.10.0/24` into BGP. |
+| **`palo-cli-show-routing-protocol-bgp-rib-out.png`** | PAN-OS CLI | `show routing protocol bgp rib-out` verifying prefix `10.10.10.0/24` advertised to peer. |
+| **`palo-alto-virtual-router-routers.png`** | PAN-OS Routing | Forwarding table confirming dynamic BGP routes `20.20.20.0/24` installed via `tunnel.1`. |
+| **`security-rule-overview.png`** | Security Policy | Inter-zone policies permitting bidirectional traffic between `Trust` and `VPN`. |
+| **`wireshark-init-auth-exchange.png`** | Wire Trace | Packet trace capturing `IKE_SA_INIT` and `IKE_AUTH` exchange sequences. |
+| **`wireshark-esp-filter.png`**| Wire Trace | Packet trace capturing ESP-encapsulated payloads matching `SPI=0xb4e8d71f`. |
+| **`monitor-traffic-logs-trust-to-vpn.png`**| Telemetry Log | Traffic monitor confirming end-to-end ping flows between `Trust` and `VPN` zones. |
+| **`10.10.10.10-pings-20.20.20.10.png`** | Data Plane Proof | Workstation terminal confirming continuous ping to `20.20.20.10` with zero packet loss. |
+| **`traceroute-20.20.20.20-to-10.10.10.10.png`** | Data Plane Proof | Traceroute output proving the exact hop-by-hop path through the IPsec tunnel. |
+| **`monitor-system-logs-bgp-established.png`** | Telemetry Log | PAN-OS system logs confirming the BGP state machine transition to "Established". |
 
 ---
