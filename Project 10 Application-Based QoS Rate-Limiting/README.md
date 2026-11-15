@@ -8,6 +8,8 @@ Every rate ceiling, queue plateau, and packet drop metric was verified using rea
 
 **Live PCAP I/O Graph**
 
+https://github.com/user-attachments/assets/ab7c9e4d-8c1f-4ea2-910f-b6dd8f47b142
+
 ---
 
 ## Architectural Workflow: Hierarchical Egress Shaping Pipeline
