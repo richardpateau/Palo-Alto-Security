@@ -198,6 +198,8 @@ PBF-TO-CSR  1   Disabled   Forward  tunnel.1        10.255.255.2  DOWN
 
 **Live Execution PCAP: Please enlarge for clearer video**
 
+https://github.com/user-attachments/assets/a6a8a247-e7bf-450d-8178-4796b96de898
+
 ---
 
 ### Key Artifact Index
