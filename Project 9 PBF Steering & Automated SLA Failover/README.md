@@ -93,7 +93,7 @@ traceroute to 10.10.10.10 (10.10.10.10), 30 hops max, 46 byte packets
 ```
 * **Path Analysis:** Hop 2 is **`10.255.255.1`** (Palo Alto `tunnel.1`), proving traffic traversed the encrypted VTI tunnel.
 
-![Palo Alto](screenshots/traceroute-before-failure-20.20.20.10-to-.10.10.10.10.png)
+![Palo Alto](screenshots/traceroute-before-failure-20.20.20.10-to-10.10.10.10.png)
 
 **10.255.255.1 - tunnel.1 verification**
 
