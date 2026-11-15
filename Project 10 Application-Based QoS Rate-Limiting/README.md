@@ -6,6 +6,8 @@ By decoupling security policy inspection from hardware rate-limiting, the firewa
 
 Every rate ceiling, queue plateau, and packet drop metric was verified using real-time Wireshark I/O throughput graphs, dataplane throughput monitors (`show qos interface ethernet1/1 throughput 0`), and hardware queue drop counters (`show qos interface ethernet1/1 counter`).
 
+**Live PCAP I/O Graph**
+
 ---
 
 ## Architectural Workflow: Hierarchical Egress Shaping Pipeline
@@ -167,8 +169,6 @@ class 8:       1999 kbps
 
 ![Palo Alto](screenshots/testing-5-mb-show-qos-interface-ethernet-throughput.png)
 
-![Palo Alto](screenshots/testing-wireshark-io-graph-5mb.png)
-
 ---
 
 ### 3. Phase 2 Verification: 10.0 Mbps Full Pipe Saturation & Priority Preemption
@@ -214,10 +214,6 @@ class 8:       1999 kbps    <-- Class 8 continues running at its 2.0 Mbps cap
 **TCP - Class 1**
 
 ![Palo Alto](screenshots/wireshark-tcp-io-grapgh.png)
-
-**iPerf3 - Class 8**
-
-![Palo Alto](screenshots/wireshark-io-graph-iperf3-2mbps.png)
 
 ---
 
