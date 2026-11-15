@@ -144,8 +144,6 @@ Inspecting the system event log (**`Monitor > Logs > System`**) verified the und
 ![PBF System Logs Failure](screenshots/monitor-system-logs-pbf-up.png)
 
 > **Key Architectural Takeaway:** The transition from `nh-down` (`PBF is Bypassed`) to `nh-up` (`PBF is Normal`) occurs at the hardware kernel level within milliseconds of probe evaluation. This guarantees that traffic is immediately diverted to the alternate route without waiting for higher-layer BGP hold-down timers (which took an additional 68 seconds to declare peer down at `22:42:17`).
-```
-
 
 ### Live CLI State Table Transitions
 
