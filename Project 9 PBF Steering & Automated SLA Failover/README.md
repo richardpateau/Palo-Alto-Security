@@ -114,7 +114,7 @@ traceroute to 10.10.10.10 (10.10.10.10), 30 hops max, 46 byte packets
 * **Path Analysis:** Traffic automatically rerouted around the collapsed tunnel, traversing the physical underlay transit network (**`192.168.254.1` ➔ `172.16.109.1` ➔ `192.168.1.200`**) before reaching `10.10.10.10`. Zero packet blackholing occurred.
 
 
-![Palo Alto](screenshots/traceroute-before-failure-20.20.20.10-to-.10.10.10.10.png)
+![Palo Alto](screenshots/traceroute-during-failure-20.20.20.10-to-10.10.10.10.png)
 
 **192.168.1.200 - Ethernet1/1 Verification**
 
