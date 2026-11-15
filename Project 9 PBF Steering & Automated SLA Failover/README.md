@@ -198,6 +198,7 @@ PBF-TO-CSR  1   Disabled   Forward  tunnel.1        10.255.255.2  DOWN
 
 ![Palo Alto](screenshots/pcap-when-tunnel-is-down.png)
 
+**Live Execution PCAP: Please enlarge for clearer video**
 
 ---
 
