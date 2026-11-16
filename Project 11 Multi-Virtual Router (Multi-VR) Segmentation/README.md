@@ -266,7 +266,7 @@ To prove that tenant isolation is enforced at the routing architecture layer bef
 
 **Corporate PC IP address verification**
 
-![Palo Alto](screenshots/10.10.10.10-ip-verification.png)
+![Palo Alto](screenshots/corporate-ip-address-verification.png)
 
 **Guest PC IP address verification**
 
