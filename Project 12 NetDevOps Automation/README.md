@@ -212,7 +212,7 @@ Process finished with exit code 0
 
 ---
 
-### 3 Multi-Format Compliance Reporting: CSV Export & Pandoc HTML Dashboard
+### 3. Multi-Format Compliance Reporting: CSV Export & Pandoc HTML Dashboard
 
 To bridge the gap between automated script execution and executive SecOps reporting, the audit findings were formatted into both a machine-readable CSV export and a browser-based HTML compliance dashboard.
 
@@ -230,7 +230,7 @@ PA-LAN-TO-CSR-LAN,High,Application Rule is too Broad (Any),Restrict to Only Appr
 PA-LAN-TO-CSR-LAN,Medium,No Security Profile Assigned,Review whether a Profile should be assigned please.
 ```
 
-![Palo Alto](screenshots/terminal-output.png)
+![Palo Alto](screenshots/results-csv.png)
 
 ---
 
