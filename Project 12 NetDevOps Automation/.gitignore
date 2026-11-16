@@ -1,7 +1,27 @@
-.terraform/
+# --- Terraform ---
 *.tfstate
-*.tfstate.*
-*.tfvars
-*.tfvars.json
-crash.log
-crash.*.log
+*.tfstate.backup
+.terraform/
+*.tfplan
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Generated Reports & Data ---
+reports/*.csv
+reports/*.html
+reports/*.json
+
+# --- Python Environment & Cache ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+
+# --- OS & IDE Files ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
