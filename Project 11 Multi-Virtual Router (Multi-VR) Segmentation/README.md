@@ -34,18 +34,15 @@ Configured the physical switch (`PHYSICAL-SW`) to multiplex both corporate and g
 ```cisco
 PHYSICAL-SW# show running-config | section interface
 interface GigabitEthernet1/0/1
- description TRUNK-TO-PALO-ALTO-ETH1/2
  switchport trunk allowed vlan 1,10,50
  switchport mode trunk
 !
 interface GigabitEthernet1/0/3
- description GUEST-WORKSTATION-ACCESS
  switchport access vlan 50
  switchport mode access
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/4
- description CORPORATE-WORKSTATION-ACCESS
  switchport access vlan 10
  switchport mode access
  spanning-tree portfast
@@ -111,6 +108,10 @@ interface GigabitEthernet1/0/4
 **Creating VR-Perimeter - Static Route 2**
 
 ![Palo Alto](screenshots/creating-vr-perimeter-static-route-2.png)
+
+**Creating VR-Perimeter - Static Route 3**
+
+![Palo Alto](screenshots/creating-vr-perimeter-static-route-3.png)
 
 **Creating VR-Perimeter - Route Overview**
 
