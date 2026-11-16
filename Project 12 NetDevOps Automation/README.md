@@ -154,9 +154,9 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-![Palo Alto](screenshots/terraform-code.png)
+![Palo Alto](screenshots/audit-rule-code-1.png)
 
-![Palo Alto](screenshots/terraform-code.png)
+![Palo Alto](screenshots/audit-rule-code-2.png)
 
 ---
 
