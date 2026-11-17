@@ -115,7 +115,7 @@ An aggressive TCP SYN flood was launched from `192.168.1.100` targeting destinat
 rich@rich-iMac:~$ sudo hping3 -S -p 443 -c 5000 192.168.1.201
 HPING 192.168.1.201 (enp2s0 192.168.1.201): S set, 40 headers + 0 data bytes
 ```
-![Palo Alto](screenshots/20-http-requests.png)
+![Palo Alto](screenshots/hping-command.png)
 
 #### Progressive Mitigation & Rate Clamping
 As the attack velocity exceeded the 100 cps activate rate and pushed past the 200 cps maximal ceiling, the firewall's per-source tracker engaged:
