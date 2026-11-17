@@ -285,7 +285,7 @@ The rule was hardened to enforce Zero Trust least privilege:
 
 ![Palo Alto](screenshots/test-security-rule-profle-before.png)
 
-**Threat Profiel - After**
+**Threat Profile - After**
 
 ![Palo Alto](screenshots/test-security-rule-profle-after.png)
 
