@@ -114,7 +114,7 @@ Under **Policies > Security**, rule **`Temp-Capture-888`** was positioned above 
    Client workstation (`10.10.10.10`) initiated an HTTP request to `http://portquiz.net:8888`.
 4. **PCAP Extraction:**
    Capture was stopped and downloaded from the firewall to:
-   `/home/rich/Documents/Palo-Alto-Security/Project 13 Custom App-ID Signature Engineering & Protocol Decoders/pcap/monitor-pcap-filter-configuring-capture.png`.
+   `/home/rich/Documents/Palo-Alto-Security/Project 13 Custom App-ID Signature Engineering & Protocol Decoders/pcap/portquiz8888-drop.pcap`.
 
 **Filter - Source (10.10.10.10)**
 
@@ -124,7 +124,7 @@ Under **Policies > Security**, rule **`Temp-Capture-888`** was positioned above 
 
 ![Palo Alto](screenshots/monitor-pcap-filter-configuring-capture.png)
 
-**File Saved from Palo Alto GUI: monitor-pcap-filter-configuring-capture.png**
+**File Saved from Palo Alto GUI: portquiz8888-drop.pcap**
 
 ![Palo Alto](screenshots/pcap-file-saved.png)
 
