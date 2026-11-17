@@ -99,10 +99,6 @@ Under **Policies > Security**, rule **`Temp-Capture-888`** was positioned above 
 
 ![Palo Alto](screenshots/temp-security-rule-application.png)
 
-**Security Rule - Service**
-
-![Palo Alto](screenshots/temp-security-rule-service.png)
-
 ---
 
 ## Multi-Phase Implementation 
