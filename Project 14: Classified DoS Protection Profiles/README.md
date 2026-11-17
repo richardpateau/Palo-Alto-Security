@@ -8,6 +8,8 @@ Every phase—from baseline latency verification (20 sequential HTTP 200 respons
 
 **Live Execution of PC being blocked from sending traffic after flood**
 
+https://github.com/user-attachments/assets/61f56623-8493-44c9-b91a-ddaa7fe7082d
+
 ---
 
 ## Architecture & Classified DoS Mitigation Pipeline
