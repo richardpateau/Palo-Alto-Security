@@ -59,7 +59,7 @@ Inspecting the traffic monitor for destination IP `35.180.86.68` (portquiz.net) 
 | **Session End Reason** | **`policy-deny`** | Blocked by security policy. |
 | **Total Bytes** | **`78 bytes`** | **Critical Detail:** Exactly one 78-byte TCP SYN packet was evaluated. |
 
-![Palo Alto](screenshots/monitor-traffic-logs-filter-port-quiz-888.png)
+![Palo Alto](screenshots/monitor-traffic-logs-filter-port-quiz-8888.png)
 
 #### C. The Reverse-Engineering Dilemma & Temporary Capture Staging (`Temp-Capture-888`)
 
