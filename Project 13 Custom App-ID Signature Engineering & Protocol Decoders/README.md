@@ -269,6 +269,10 @@ ID    Application   State  Type Flag Src[Sport]/Zone/Proto (translated IP[Port])
   * **Session End Reason:** **`tcp-fin`** (Full bidirectional payload exchange; clean TCP teardown).
   * **Bytes Exchanged:** **`3.5 KB – 3.8 KB`** per session.
 
+**Successful Curl**
+
+![Palo Alto](screenshots/pc-successful-curl.png)
+
 ![Palo Alto](screenshots/monitor-traffic-logs-filter-port-quiz-8888.png)
 
 #### B. Negative Test: Port Evasion Defense (Unauthorized Port 8889)
