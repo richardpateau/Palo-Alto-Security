@@ -204,6 +204,8 @@ sessions
 
 ![Palo Alto](screenshots/show-dos-protection-rule-protect-meridian-statistics.png)
 
+**Monitor Threat Logs**
+
 ![Palo Alto](screenshots/monitor-threat-logs-critical.png)
 
 ### 5. Executive Visibility: Application Command Center (ACC) Threat Correlation
