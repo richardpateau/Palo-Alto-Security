@@ -8,7 +8,7 @@ Every design principle, cryptographic handshake, failure threshold, and data-pla
 
 ## Lab Architecture & Hybrid Enterprise Fabric
 
-![Palo Alto](screenshots/palo-alto-read-me-draw-io.png)
+![Palo Alto](palo-alto-read-me-draw-io.png)
 
 ### Infrastructure Node & Interface Matrix
 
