@@ -283,3 +283,14 @@ The primary engineering proofs, packet-level verifications, and data plane diagn
 | **`show-session-all-google-allowed.png`** | CLI Diagnostic | Dataplane flow table verifying sessions transitioned from `DISCARD` to `ACTIVE FLOW`. |
 | **`security-policy-match-google.png`** | Control Plane CLI | CLI simulation confirming `google-base` matches Rule 3 with action `allow`. |
 | **`security-policy-match-youtube.png`** | Control Plane CLI | CLI simulation confirming `youtube-base` matches Rule 4 with action `drop`. |
+
+### What's Next?
+
+With Layer 7 App-ID enforcement successfully blocking port evasion and shadow IT, the next step is to look inside the encrypted TLS tunnels themselves, where over 90% of modern enterprise traffic hides.
+
+Continue to the next project to explore enterprise PKI and outbound inspection:
+- **[Project 02: Enterprise SSL/TLS Forward Proxy Decryption & PKI Integration](../02-forward-proxy-ssl-decryption/)** – Deploying a Subordinate CA, configuring Forward Trust certificates, and decrypting outbound HTTPS traffic to enforce compliance bypasses and deep payload inspection.
+
+---
+
+[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
