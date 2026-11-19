@@ -471,4 +471,4 @@ Continue to the next project to explore multi-vendor cryptography and dynamic ro
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

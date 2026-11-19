@@ -485,4 +485,4 @@ Continue to the next project to explore dataplane hardening and anti-reconnaissa
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

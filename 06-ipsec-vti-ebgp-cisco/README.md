@@ -545,4 +545,4 @@ Continue to the next project to explore remote access and split-tunneling:
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

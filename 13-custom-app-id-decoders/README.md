@@ -317,4 +317,4 @@ Continue to the next project to explore surgical threat mitigation:
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

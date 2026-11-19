@@ -449,4 +449,4 @@ Continue to the next project to explore SLA-driven path monitoring and failover:
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

@@ -240,4 +240,4 @@ You have successfully completed the **15-Project Master Palo Alto Networks Portf
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

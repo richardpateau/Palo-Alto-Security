@@ -293,4 +293,4 @@ Continue to the next project to explore enterprise PKI and outbound inspection:
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

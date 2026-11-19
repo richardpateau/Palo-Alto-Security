@@ -245,4 +245,4 @@ Continue to the next project to explore deep threat inspection and automated sin
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

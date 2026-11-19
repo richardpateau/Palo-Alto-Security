@@ -491,11 +491,11 @@ Inspecting the Traffic Monitor verified that policy decisions are enforced per u
 
 ### What's Next?
 
-With site-to-site encrypted overlays and dynamic BGP peering established for branch connectivity, the next step is to secure the remote workforce by transforming the firewall into an enterprise SASE edge.
+With remote workers securely accessing internal resources via GlobalProtect, the next step is to protect internal production web servers from external internet-based adversaries launching encrypted web exploits.
 
-Continue to the next project to explore remote access and split-tunneling:
-- **[Project 07: Enterprise GlobalProtect Infrastructure – Gateway, Portal, Split-Tunneling & Zero Trust Remote RBAC](../07-globalprotect-sase-remote-access/)** – Deploying the GlobalProtect Portal/Gateway, leasing virtual IP pools, enforcing client-side split-tunneling, and applying identity-aware RBAC over IPSec/ESP tunnels.
+Continue to the next project to explore reverse proxy defense and inbound inspection:
+- **[Project 08: Inbound SSL Decryption (SSL Inbound Inspection) & Reverse Proxy DMZ Defense](../08-inbound-ssl-decryption-waf/)** – Terminating TLS on a dedicated VIP, decrypting inbound HTTP payloads, and blocking OWASP Top 10 attacks (Log4Shell, SQLi, XSS) before they reach the web server.
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

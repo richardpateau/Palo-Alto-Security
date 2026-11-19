@@ -386,4 +386,4 @@ Continue to the next project to explore NetDevOps automation and compliance audi
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

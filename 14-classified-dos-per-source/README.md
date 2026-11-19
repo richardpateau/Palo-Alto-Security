@@ -262,4 +262,4 @@ Continue to the final capstone project to explore sub-second routing convergence
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

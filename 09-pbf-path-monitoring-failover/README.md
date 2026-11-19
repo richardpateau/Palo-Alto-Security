@@ -230,4 +230,4 @@ Continue to the next project to explore hierarchical bandwidth management:
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)

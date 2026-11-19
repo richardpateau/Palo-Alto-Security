@@ -263,4 +263,4 @@ Continue to the next project to explore identity fabrics and role-based access:
 
 ---
 
-[⬅️ Back to Palo Alto Networks Master Portfolio Overview](../README.md)
+[Back to Palo Alto Networks Master Portfolio Overview](../README.md)
